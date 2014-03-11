@@ -1,8 +1,22 @@
 /*
+
 Spritz Speed Reader by Charlotte Dann
-local storage implementation by Keith Wyland
+Local storage implementation by Keith Wyland
+
+---
+
+Spritz Speed Reading V2 - Bookmarklet Edition by Oleg P
+
+Mixed and matched from a fork of http://codepen.io/pouretrebelle/full/reGKw and readability text extraction js from https://github.com/Miserlou/OpenSpritz.
+
+Use the bookmarklet code from the pen JS to speed-read any web page (tested in Chrome and mobile Safari) with the following API:
+
+http://codepen.io/the-happy-hippo/full/aDHrl?url=<web_page_url>
+
 */
 
+/* Persistent URL used by bookmarklet code (cannot use 'location' here). */
+var this_page_permalink = 'http://codepen.io/the-happy-hippo/full/aDHrl';
 
 var $wpm = $('#spritz_wpm');
 var interval = 60000/$wpm.val();  
@@ -65,20 +79,22 @@ function words_save() {
 /* TEXT PARSING */
 function words_set() {
   words = $words.val().trim()
-  .replace(/([-—])(\w)/g, '$1 $2')
-  .replace(/[\r\n]/g, ' {linebreak} ')
-  .replace(/[ \t]{2,}/g, ' ')
-  .split(' ');
-  for (var j = 1; j < words.length; j++) {
-    words[j] = words[j].replace(/{linebreak}/g, '   ');
-  }
+  .replace(/([\-\u2010-\u2014])(\w)/g, '$1 $2')    // detach some dashes.
+  .replace(/([\.\?\!\;\-\u2010-\u2014])/g, '$1 {stumble}') // stumble on punctuation.
+  .split(/\s+/); // shrink long whitespaces and split.
+  
+  //for (var j = 1; j < words.length; j++) {
+  //  words[j] = words[j].replace(/{linebreak}/g, '   ');
+  //}
 }
 /* ON EACH WORD */
 function word_show(i) {
   $('#spritz_progress').width(100*i/words.length+'%');
   var word = words[i];
   var stop = Math.round((word.length+1)*0.4)-1;
-  $space.html('<div>'+word.slice(0,stop)+'</div><div>'+word[stop]+'</div><div>'+word.slice(stop+1)+'</div>');
+  if (word != '{stumble}') {
+    $space.html('<div>'+word.slice(0,stop)+'</div><div>'+word[stop]+'</div><div>'+word.slice(stop+1)+'</div>');
+  }
 }
 function word_next() {
   i++;
@@ -207,7 +223,10 @@ function spritz_alert(type) {
   $('#alert').text(msg).fadeIn().delay(2000).fadeOut();
 }
 
-
+/* ERROR FUNCTION */
+function spritz_error(msg) {
+    $('#alert').text(msg).fadeIn().delay(5000).fadeOut();
+}
 
 /* CONTROLS */
 $('#spritz_wpm').on('input', function() {
@@ -299,11 +318,6 @@ $(document).on('keydown', function(e) {
   };
 });
 
-
-
-/* INITIATE */
-words_load();
-
 /* LIGHT/DARK THEME */
 $('.light').on('click', function() {
   $('html').toggleClass('night');
@@ -314,4 +328,75 @@ $('.light').on('click', function() {
 $('a.toggle').on('click', function() {
   $(this).siblings('.togglable').slideToggle();
   return false;
+});
+
+function get_url_param(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+// Please don't abuse this.
+var readability_token = '29d6e9893943faca8e084f5085c327a6860ed771';
+
+// Uses the Readability API to get the juicy content of the current page.
+function spritzify_url(url) {
+  //var url = 'http://www.spritzinc.com/the-science/';
+  $.getJSON("https://www.readability.com/api/content/v1/parser?url="+ url +"&token=" + readability_token +"&callback=?",
+    function (data) {
+      if(data.error) {
+        spritz_error('Article extraction failed. Try selecting text instead.');
+        return;
+      }
+
+      var title = '';
+      if(data.title !== ''){
+        title = data.title + ' ';
+      }
+
+      var author = '';
+      if(data.author !== null){
+        author = "By " + data.author + '. ';
+      }
+
+      var body = jQuery(data.content).text(); // Textify HTML content.
+      body = $.trim(body); // Trip trailing and leading whitespace.
+      body = body.replace(/\s+/g, ' '); // Shrink long whitespaces.
+
+      var text_content = title + author + body;
+      text_content = text_content.replace(/\./g, '. '); // Make sure punctuation is apprpriately spaced.
+      text_content = text_content.replace(/\?/g, '? ');
+      text_content = text_content.replace(/\!/g, '! ');
+      $words.val(text_content);
+
+      words_set();
+      word_show(0);
+      spritz_pause(true);
+
+    }).error(function() {
+      spritz_error('Article extraction failed. Try selecting text instead.'); });
+}
+
+function create_bookmarklet() {
+  var code = 'javascript:' + encodeURIComponent(
+    'function iptxt(){var d=document;try{if(!d.body)throw(0);window.location' +
+    '="' + this_page_permalink +
+    '?url="+encodeURIComponent(d.location.href);' + 
+    '}catch(e){alert("Please wait until the page has loaded.");}}iptxt();void(0)');
+  $('#bm').attr('href', code);
+  $('#bmcode').val(code);
+}
+
+/* INITIATE */
+$(document).ready(function() {
+  create_bookmarklet();
+
+  custom_url = get_url_param('url');
+
+  if(custom_url) {
+    spritzify_url(custom_url);
+  } else {
+    words_load();
+  }
 });
