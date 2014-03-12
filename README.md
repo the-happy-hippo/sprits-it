@@ -25,3 +25,9 @@ Here is the original description from [Charlotte Dann](http://codepen.io/pouretr
 > Use [Spritz](http://www.spritzinc.com/) right now! Options for speed, localStorage saving, jog forward/backward, text size and dark/light theme, also with keyboard controls and progress bar. You'll never need to read conventionally again. 
 > localStorage implementation by [Keith Wyland](http://codepen.io/keithwyland/), thanks Keith!
 
+### Sister Projects
+
+* [OpenSpritz](https://github.com/Miserlou/OpenSpritz) - OpenSpritz project.
+* [Spritz Speed Reading V2](http://codepen.io/pouretrebelle/pen/reGKw) - Codepen Spritz project.
+* [Spray](https://github.com/chaimpeck/spray) - OpenSpritz Bootstrap extension (uses php).
+
