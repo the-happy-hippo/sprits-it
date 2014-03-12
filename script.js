@@ -209,6 +209,11 @@ function spritz_autosave() {
   }
 };
 
+/* STATUS FUNCTION */
+function spritz_status(msg) {
+  return $('#alert').text(msg);
+}
+
 /* ALERT FUNCTION */
 function spritz_alert(type) {
   var msg = '';
@@ -220,12 +225,12 @@ function spritz_alert(type) {
       msg = 'Words, Position and Settings have been saved in local storage for the next time you visit';
       break;
   }
-  $('#alert').text(msg).fadeIn().delay(2000).fadeOut();
+  return spritz_status(msg).fadeIn().delay(2000).fadeOut();
 }
 
 /* ERROR FUNCTION */
 function spritz_error(msg) {
-    $('#alert').text(msg).fadeIn().delay(5000).fadeOut();
+  return spritz_status(msg).fadeIn().delay(5000).fadeOut();
 }
 
 /* CONTROLS */
