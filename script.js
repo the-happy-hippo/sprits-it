@@ -405,3 +405,12 @@ $(document).ready(function() {
     words_load();
   }
 });
+
+window.addEventListener("pageshow", function(evt){
+  console.log('pageshow');
+  spritz_pause(true);
+}, false);
+window.addEventListener("pagehide", function(evt){
+  console.log('pagehide');
+  spritz_pause(true);
+}, false);
