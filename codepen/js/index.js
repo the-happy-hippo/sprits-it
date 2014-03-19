@@ -19,7 +19,7 @@ http://codepen.io/the-happy-hippo/full/aDHrl?url=<web_page_url>
 var this_page_permalink = 'http://codepen.io/the-happy-hippo/full/aDHrl';
 
 var $wpm = $('#spritz_wpm');
-var interval = 60000/$wpm.val();  
+var interval = 60000/$wpm.val();
 var paused = false;
 var $space = $('#spritz_word');
 var i = 0;
@@ -48,7 +48,7 @@ function words_load() {
       $('html').addClass('autosave');
       $('#autosave_checkbox').prop('checked', true);
     };
-    $wpm.val(local_spritz.wpm); 
+    $wpm.val(local_spritz.wpm);
     interval = 60000/local_spritz.wpm;
     spritz_zoom(0);
     words_set();
@@ -56,7 +56,7 @@ function words_load() {
     word_update();
     spritz_pause(true);
     spritz_alert('loaded');
-  }  
+  }
 }
 function words_save() {
   local_spritz = {
@@ -79,20 +79,18 @@ function words_save() {
 /* TEXT PARSING */
 function words_set() {
   words = $words.val().trim()
-  .replace(/([\-\u2010-\u2014])(\w)/g, '$1 $2')    // detach some dashes.
-  .replace(/([\.\?\!\;\-\u2010-\u2014])/g, '$1 {stumble}') // stumble on punctuation.
+  .replace(/([\u2010-\u2014])(\S)/g, '$1 $2')    // detach some dashes.
+  .replace(/([\.\?\!\;\:\)])/g, '$1 • ') // stumble on punctuation.
   .split(/\s+/); // shrink long whitespaces and split.
-  
-  //for (var j = 1; j < words.length; j++) {
-  //  words[j] = words[j].replace(/{linebreak}/g, '   ');
-  //}
 }
+
 /* ON EACH WORD */
 function word_show(i) {
   $('#spritz_progress').width(100*i/words.length+'%');
+  $('#spritz_progress1').width(100*i/words.length+'%');
   var word = words[i];
   var stop = Math.round((word.length+1)*0.4)-1;
-  if (word != '{stumble}') {
+  if (word != '•') {
     $space.html('<div>'+word.slice(0,stop)+'</div><div>'+word[stop]+'</div><div>'+word.slice(stop+1)+'</div>');
   }
 }
@@ -119,7 +117,7 @@ function word_update() {
       clearInterval(spritz);
     };
   }, interval);
-} 
+}
 
 /* PAUSING FUNCTIONS */
 function spritz_pause(ns) {
@@ -186,7 +184,7 @@ function spritz_zoom(c) {
 }
 function spritz_refresh() {
   clearInterval(spritz);
-  words_set(); 
+  words_set();
   i = 0;
   spritz_pause();
   word_show(0);
@@ -347,7 +345,6 @@ var readability_token = '29d6e9893943faca8e084f5085c327a6860ed771';
 
 // Uses the Readability API to get the juicy content of the current page.
 function spritzify_url(url) {
-  //var url = 'http://www.spritzinc.com/the-science/';
   $.getJSON("https://www.readability.com/api/content/v1/parser?url="+ url +"&token=" + readability_token +"&callback=?",
     function (data) {
       if(data.error) {
@@ -387,10 +384,12 @@ function create_bookmarklet() {
   var code = 'javascript:' + encodeURIComponent(
     'function iptxt(){var d=document;try{if(!d.body)throw(0);window.location' +
     '="' + this_page_permalink +
-    '?url="+encodeURIComponent(d.location.href);' + 
+    '?url="+encodeURIComponent(d.location.href);' +
     '}catch(e){alert("Please wait until the page has loaded.");}}iptxt();void(0)');
   $('#bm').attr('href', code);
-  $('#bmcode').val(code);
+  $('#bm').click(function(){return false;});
+  $('#bmc').val(code);
+  //$('#bmc').click(function(){this.focus();this.select();});
 }
 
 /* INITIATE */
@@ -414,3 +413,5 @@ window.addEventListener("pagehide", function(evt){
   console.log('pagehide');
   spritz_pause(true);
 }, false);
+
+
