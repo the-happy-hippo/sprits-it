@@ -84,7 +84,6 @@ function words_set() {
 /* ON EACH WORD */
 function word_show(i) {
   $('#spritz_progress').width(100*i/words.length+'%');
-  $('#spritz_progress1').width(100*i/words.length+'%');
   var word = words[i];
   var stop = Math.round((word.length+1)*0.4)-1;
   if (word != '•') {
