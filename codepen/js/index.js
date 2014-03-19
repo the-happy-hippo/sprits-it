@@ -15,9 +15,6 @@ http://codepen.io/the-happy-hippo/full/aDHrl?url=<web_page_url>
 
 */
 
-/* Persistent URL used by bookmarklet code (cannot use 'location' here). */
-var this_page_permalink = 'http://codepen.io/the-happy-hippo/full/aDHrl';
-
 var $wpm = $('#spritz_wpm');
 var interval = 60000/$wpm.val();
 var paused = false;
@@ -381,15 +378,16 @@ function spritzify_url(url) {
 }
 
 function create_bookmarklet() {
+  var this_page_permalink = location.origin + location.pathname;
   var code = 'javascript:' + encodeURIComponent(
     'function iptxt(){var d=document;try{if(!d.body)throw(0);window.location' +
     '="' + this_page_permalink +
     '?url="+encodeURIComponent(d.location.href);' +
     '}catch(e){alert("Please wait until the page has loaded.");}}iptxt();void(0)');
   $('#bm').attr('href', code);
-  $('#bm').click(function(){return false;});
+  $('#bm').click(function(){ return false; });
   $('#bmc').val(code);
-  //$('#bmc').click(function(){this.focus();this.select();});
+  $('#bmc').click(function(){this.focus();this.select();});
 }
 
 /* INITIATE */

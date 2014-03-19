@@ -83,6 +83,12 @@ $c-dark-icon-hover: #999
         color: $c-dark-icon-hover
 
 .settings
+  .input-url
+    width: 100%
+    background: $c-light-field-bg
+    border: 1px
+    .night &
+      background: $c-dark-field-bg
   input, textarea, button
     box-sizing: border-box
     border: 0
@@ -92,6 +98,7 @@ $c-dark-icon-hover: #999
       color: $c-dark-text
     &:focus
       outline: none
+
 .settings-controls
   max-width: 30rem
   margin: 0 auto

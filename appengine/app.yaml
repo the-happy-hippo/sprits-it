@@ -9,11 +9,11 @@ libraries:
   version: "latest"
 
 handlers:
-- url: /codepen/
+- url: /read
   static_files: lib/codepen/index.html
   upload: lib/codepen/index\.html
 
-- url: /codepen
+- url: /assets
   static_dir: lib/codepen/
 
 - url: /.*

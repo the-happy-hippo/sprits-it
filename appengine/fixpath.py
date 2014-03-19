@@ -2,6 +2,6 @@
 import sys
 import os.path
 
-# Path to lib direcotory
+# Insert the path to the lib folder
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 
