@@ -5,19 +5,16 @@ sprits-it! — Awesome Speed-Reading
 
 The speed reading technique is currently based on the ideas of [Spritz](http://www.spritzinc.com/) described in their [blog](http://www.spritzinc.com/blog). At the time of this writing [Spritz](http://www.spritzinc.com/) had virtually nothing to offer to `iOs` device users to play with :confused:. So this project is targeted specifically on usability in mobile Safari and Chrome on `iOs`, yet the chances are it would work in other browsers as well.
 
-To read a web page at ``page_url`` use the following API (_temporarily_ hosted at [CodePen](http://codepen.io)):
+To read a web page at ``page_url`` use the following API:
 ```
-      http://codepen.io/the-happy-hippo/full/aDHrl?url=page_url
+      http://the-happy-hippo.github.io/sprits-it/read/?url=page_url
 ```
 
 For example:
 
-> http://codepen.io/the-happy-hippo/full/aDHrl?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
+> http://the-happy-hippo.github.io/sprits-it/read/?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
 
-Alternatively, you migh just grab a _bookmarklet_ from the bottom of my [Pen](http://codepen.io/the-happy-hippo/full/aDHrl) page, or create yours manually by pasting the javascript code below in your bookmark:
-```javascript
-javascript:function iptxt()%7Bvar d%3Ddocument%3Btry%7Bif(!d.body)throw(0)%3Bwindow.location%3D"http%3A%2F%2Fcodepen.io%2Fthe-happy-hippo%2Ffull%2FaDHrl%3Furl%3D"%2BencodeURIComponent(d.location.href)%3B%7Dcatch(e)%7Balert("Please wait until the page has loaded.")%3B%7D%7Diptxt()%3Bvoid(0)
-```
+Alternatively, you migh just grab a _bookmarklet_ at the bottom of the page at http://the-happy-hippo.github.io/sprits-it/read.
 
 ## Contributors
 
@@ -33,5 +30,5 @@ Here is the description from [Charlotte Dann](http://codepen.io/pouretrebelle) f
 
 * [OpenSpritz](https://github.com/Miserlou/OpenSpritz) - OpenSpritz project by [@miserlou](https://github.com/miserlou)
 * [Spritz Speed Reading V2](http://codepen.io/pouretrebelle/pen/reGKw) - Codepen Spritz project by [@Charlotte Dann](http://codepen.io/pouretrebelle)
-* [Spray](https://github.com/chaimpeck/spray) - OpenSpritz Bootstrap extension by [@chaimpeck](https://github.com/chaimpeck)
+* [Spray](https://github.com/chaimpeck/spray) - Bootstrap extension of OpenSpritz by [@chaimpeck](https://github.com/chaimpeck)
 
