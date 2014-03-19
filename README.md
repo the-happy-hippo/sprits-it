@@ -7,7 +7,7 @@ The speed reading technique is currently based on the ideas of [Spritz](http://w
 
 To read a web page at ``page_url`` use the following API:
 ```
-      http://the-happy-hippo.github.io/sprits-it/read/?url=page_url
+http://the-happy-hippo.github.io/sprits-it/read/?url=page_url
 ```
 
 For example:
