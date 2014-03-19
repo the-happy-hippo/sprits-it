@@ -5,7 +5,7 @@ html
 
     title Sprits It!
 
-    link(href='/assets/css/style.css', media='screen, projection', rel='stylesheet', type='text/css')
+    link(href='css/style.css', media='screen, projection', rel='stylesheet', type='text/css')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet prefetch')
 
   body
@@ -49,7 +49,7 @@ html
 
         p Just enter a page URL to start reading:
 
-        form(name="input-url", action="/read", method="get")
+        form(name="input-url", action="", method="get")
           input.input-url(type="text", name="url")
 
         div.bookmarklet-container
@@ -68,6 +68,6 @@ html
     .alert#alert
 
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-    script(src='/assets/js/min/index.min.js')
+    script(src='js/min/index.min.js')
 
 
