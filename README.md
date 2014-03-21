@@ -7,7 +7,9 @@ The speed reading technique is currently based on the ideas of [Spritz](http://w
 
 ## Demo
 
-Please visit live demo page at:
+The project home page is hosted on [GitHub Pages](http://pages.github.com) at http://the-happy-hippo.github.io/sprits-it.
+
+Please visit a live demo here:
 
 > http://the-happy-hippo.github.io/sprits-it/read
 
