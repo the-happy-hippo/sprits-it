@@ -3,28 +3,22 @@ sprits-it! — Awesome Speed-Reading
 
 `sprits-it!` is an open source web application which allows speed-reading of arbitrary web pages in a browser.
 
-The speed reading technique is currently based on the ideas of [Spritz](http://www.spritzinc.com/) described in their [blog](http://www.spritzinc.com/blog). At the time of this writing [Spritz](http://www.spritzinc.com/) had virtually nothing to offer to [iOs](http://www.apple.com/ios) device users to play with.
-
-This project is targeted specifically on usability in Safari and Chrome mobile browsers, yet the chances are it would work in other browsers as well.
-
-Initially, I had virtually no background in modern web design, nor in `git`, so this project was kicked off with purely educational purposes. If you find something stupid that I did - please don't blame me but never hesitate to point this out so I can learn...
+The speed reading technique is currently based on the ideas of [Spritz](http://www.spritzinc.com/) described in their [blog](http://www.spritzinc.com/blog). At the time of this writing [Spritz](http://www.spritzinc.com/) had virtually nothing to offer to [iOs](http://www.apple.com/ios) device users to play with. This project is targeted specifically on usability in Safari and Chrome mobile browsers but should ultimately work well on other platforms.
 
 ## Demo
 
-Please visit the demo page at:
+Please visit live demo page at:
 
-> http://the-happy-hippo.github.io/sprits-it/read.
+> http://the-happy-hippo.github.io/sprits-it/read
 
-To read a web page at ``page_url`` use the following API:
-```
-http://the-happy-hippo.github.io/sprits-it/read/?url=page_url
-```
+To read a web page at ``page_url`` use the following GET query:
+`http://the-happy-hippo.github.io/sprits-it/read/?url=page_url`
 
 For example:
 
 > http://the-happy-hippo.github.io/sprits-it/read/?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
 
-Alternatively, you migh just grab a _bookmarklet_ at the bottom of the page at http://the-happy-hippo.github.io/sprits-it/read.
+Alternatively, you migh just grab a _bookmarklet_ at http://the-happy-hippo.github.io/sprits-it/read.
 
 ## Contributors
 
@@ -41,4 +35,11 @@ Here is the description from [Charlotte Dann](http://codepen.io/pouretrebelle) f
 * [OpenSpritz](https://github.com/Miserlou/OpenSpritz) - OpenSpritz project by [@miserlou](https://github.com/miserlou)
 * [Spritz Speed Reading V2](http://codepen.io/pouretrebelle/pen/reGKw) - Codepen Spritz project by [@Charlotte Dann](http://codepen.io/pouretrebelle)
 * [Spray](https://github.com/chaimpeck/spray) - Bootstrap extension of OpenSpritz by [@chaimpeck](https://github.com/chaimpeck)
+
+### Notice to Contributors
+
+I have started this project purely for educational purposes while having virtually no prior background in web design (apart from plain old HTML tables of 90's).
+
+If you find something stupid that I did &mdash; please don't blame me and never hesitate to point those things out so I can learn from them.
+
 
