@@ -3,9 +3,11 @@ sprits-it! — Awesome Speed-Reading
 
 `sprits-it!` is an open source web application which allows speed-reading of arbitrary web pages in a browser.
 
-The speed reading technique is currently based on the ideas of [Spritz](http://www.spritzinc.com/) described in their [blog](http://www.spritzinc.com/blog). At the time of this writing [Spritz](http://www.spritzinc.com/) had virtually nothing to offer to `iOs` device users to play with.
+The speed reading technique is currently based on the ideas of [Spritz](http://www.spritzinc.com/) described in their [blog](http://www.spritzinc.com/blog). At the time of this writing [Spritz](http://www.spritzinc.com/) had virtually nothing to offer to [iOs](http://www.apple.com/ios) device users to play with.
 
 This project is targeted specifically on usability in Safari and Chrome mobile browsers, yet the chances are it would work in other browsers as well.
+
+Initially, I had virtually no background in modern web design, nor in `git`, so this project was kicked off with purely educational purposes. If you find something stupid that I did - please don't blame me but never hesitate to point this out so I can learn...
 
 ## Demo
 

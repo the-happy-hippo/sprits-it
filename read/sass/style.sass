@@ -1,4 +1,3 @@
-@import "compass/css3"
 
 $f-icon: 'Spritz', sans-serif
 
@@ -24,7 +23,9 @@ $c-dark-icon-hover: #999
   padding: 1rem 0 1.2rem
   border-top: 2px solid $c-light-markers
   border-bottom: 2px solid $c-light-markers
-  margin: 10rem auto
+  margin: auto
+  margin-top: 0.5rem
+  margin-bottom: 2rem
   font-size: 1em
   &:before, &:after
     content: ''
@@ -83,12 +84,28 @@ $c-dark-icon-hover: #999
         color: $c-dark-icon-hover
 
 .settings
-  .input-url
+  .custom-url-form
     width: 100%
-    background: $c-light-field-bg
-    border: 1px
-    .night &
-      background: $c-dark-field-bg
+    overflow: hidden
+    span
+      display: block
+      overflow: hidden
+      .custom-url-input
+        width: 100%
+        background: $c-light-field-bg
+        .night &
+          background: $c-dark-field-bg
+    .custom-url-submit
+      margin: 5px
+      font-size: 1rem
+      border: 1px solid
+      background: $c-light-field-bg
+      color: $c-light-text
+      pointer-events: auto
+      float: right
+      .night &
+        background: $c-dark-field-bg
+        color: $c-dark-text
   input, textarea, button
     box-sizing: border-box
     border: 0
@@ -128,6 +145,7 @@ $c-dark-icon-hover: #999
       content: '\e601'
       position: relative
       margin-left: -0.4rem
+
 .wpm
   position: relative
   display: inline-block
@@ -143,17 +161,32 @@ $c-dark-icon-hover: #999
     -webkit-appearance: none
 
 .extra-controls
-  margin: 5rem auto 0
+  margin: 1rem auto 0
   .toggle
     font-size: 2rem
     padding: 1rem 2rem
   .togglable
     display: none
+
   .zoom
     font-size: 2rem
     *
       display: inline-block
       padding: 0.6rem
+
+  .light
+    font-size: 3rem
+    font-family: $f-icon
+    text-decoration: none
+    display: inline-block
+    margin-left: 2rem
+    &:after
+      content: '\e609'
+      color: $c-light-text
+    .night &:after
+      content: '\e608'
+      color: $c-dark-text
+
   .autosave
     .checkbox
       display: none
@@ -184,7 +217,6 @@ $c-dark-icon-hover: #999
     width: 100%
     height: 8em
     transition: height 0.2s linear
-    padding: 1rem 1.5rem
     background-color: $c-light-field-bg
     &::-webkit-scrollbar
       width: 0.8rem
@@ -213,49 +245,37 @@ $c-dark-icon-hover: #999
   .fullscreen & .expand:before
     content: '\e612'
 
-.light
-  position: absolute
-  top: 2rem
-  left: 3rem
-  font-size: 3rem
-  font-family: $f-icon
-  text-decoration: none
-  &:after
-    content: '\e609'
-    color: $c-light-icon
-  .night &:after
-    content: '\e608'
-    color: $c-dark-icon
-
-#alert
-  position: absolute
-  top: 0
-  padding: 2rem
-  box-sizing: border-box
+.alert-container
   width: 100%
-  text-align: center
-  left: 0
-  pointer-events: none
+  height: 2rem
+  .alert
+    padding: 1rem
+    box-sizing: border-box
+    width: 100%
+    text-align: center
+    pointer-events: none
+    color: $c-light-icon
+    .night
+      color: $c-dark-icon
 
 .bookmarklet-container
-  text-align: left
-  margin-top: 2rem
-  margin-bottom: 3rem
-
-.bookmarklet
-  cursor: move
-  font-size: 1rem
-  height: 1rem
-  padding: 1rem
-  text-decoration: none
-  border-radius: 4px
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2)
-  background: $c-light-field-bg
-  color: $c-light-text
-  pointer-events: auto
-  .night &
-    background: $c-dark-field-bg
-    color: $c-dark-text
+  margin-top: 1rem
+  margin-bottom: 0rem
+  .bookmarklet
+    cursor: move
+    font-size: 1rem
+    height: 1rem
+    line-height: 70%
+    padding: 0.7rem
+    text-decoration: none
+    border-radius: 4px
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2)
+    background: $c-light-field-bg
+    color: $c-light-text
+    pointer-events: auto
+    .night &
+      background: $c-dark-field-bg
+      color: $c-dark-text
 
 .bmcode-container
   text-align: center
