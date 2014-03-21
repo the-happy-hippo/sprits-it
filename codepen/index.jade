@@ -25,15 +25,23 @@ html
           a.pause.entypo-pause#spritz_pause(href="#" title="Pause/Play")
           a.forward.entypo-right-open#spritz_forward(href="#" title="Jog Forward")
 
+      .alert-container
+        .alert#alert
+
       .controls.extra-controls
         .togglable.closed
           .zoom
             a.smaller.entypo-minus#spritz_smaller(href="#" title="Smaller")
             span.entypo-search(href="#" title="Smaller")
             a.bigger.entypo-plus#spritz_bigger(href="#" title="Bigger")
+            a.light(href="#" title="Change Theme")
           .autosave
             input.checkbox#autosave_checkbox(type="checkbox")
             label.checkbox-label.entypo-cancel#spritz_autosave(for="autosave_checkbox") auto-save on pause
+          div.bookmarklet-container
+            a.bookmarklet#bm(href="").
+              Sprits It! Bookmarklet
+
         a.toggle.entypo-dot-3(href="#" title="Extra Controls")
 
       .words
@@ -47,23 +55,14 @@ html
 
         p Just enter a page URL to start reading:
 
-        form(name="input-url", action="/read", method="get")
-          input.input-url(type="text", name="url")
-
-        div.bookmarklet-container
-          span.
-            Or grab the bookmarklet: &nbsp;&nbsp;
-          a.bookmarklet#bm(href="").
-            Spritz It!
+        form.custom-url-form(name="input-url", action="", method="get")
+            button.custom-url-submit Sprits It!
+            span: input.custom-url-input(type="text", name="url")
 
         p Or copy the following Javascript code:
 
         div.bmcode-container
           textarea.bmcode#bmc(readonly).
-
-    a.light(href="#" title="Change Theme")
-
-    .alert#alert
 
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
     script(src='/assets/js/min/index.min.js')
