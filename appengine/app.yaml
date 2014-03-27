@@ -10,11 +10,11 @@ libraries:
 
 handlers:
 - url: /read
-  static_files: lib/codepen/index.html
-  upload: lib/codepen/index\.html
+  static_files: lib/static/index.html
+  upload: lib/static/index\.html
 
 - url: /assets
-  static_dir: lib/codepen/
+  static_dir: lib/static/
 
 - url: /.*
   script: spritsit.application

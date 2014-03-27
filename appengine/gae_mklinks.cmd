@@ -11,7 +11,7 @@ set LIB_TARGET=%CD%
 
 cd "%LIB_LINKS%"
 
-FOR %%p IN (chardet cssselect readability codepen) DO (
+FOR %%p IN (chardet cssselect readability static) DO (
   IF EXIST "%%p" (
     echo Existing lib: %%p
   ) ELSE (
@@ -19,3 +19,4 @@ FOR %%p IN (chardet cssselect readability codepen) DO (
     mklink /d %%p "%LIB_TARGET%\%%p"
   )
 )
+
