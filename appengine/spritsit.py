@@ -61,6 +61,9 @@ class TextHandler(BaseHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
 
+        # FIXME: Be more specific in CORS; but for now rely on 'token'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+
         doc = self._create_document()
 
         for field in ['title', 'content']: # 'url'
