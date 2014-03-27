@@ -1,12 +1,19 @@
+
+include utils
+
 doctype html
 html
   head
-    meta(charset='UTF-8')
-
     title Sprits It!
 
-    link(href='/assets/css/style.css', media='screen, projection', rel='stylesheet', type='text/css')
+    meta(charset='UTF-8')
+
+    link(href='#{locals.assets}css/style.css', media='screen, projection', rel='stylesheet', type='text/css')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet prefetch')
+
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(name="keywords", content="open source, speed-reading, speed reading, reading, books, readability, spritz, open spritz")
+    meta(name="description", content="sprits-it! - Awesome Speed-Reading")
 
   body
 
@@ -26,7 +33,10 @@ html
           a.forward.entypo-right-open#spritz_forward(href="#" title="Jog Forward")
 
       .alert-container
-        .alert#alert
+        span
+          a#article-url(href='#', hidden)
+          img#img-loading(src='#{locals.assets}progress.gif')
+        span.alert#alert
 
       .controls.extra-controls
         .togglable.closed
@@ -35,6 +45,7 @@ html
             span.entypo-search(href="#" title="Smaller")
             a.bigger.entypo-plus#spritz_bigger(href="#" title="Bigger")
             a.light(href="#" title="Change Theme")
+            a#erase-storage(href='#' title='Erase Local Storage') E
           .autosave
             input.checkbox#autosave_checkbox(type="checkbox")
             label.checkbox-label.entypo-cancel#spritz_autosave(for="autosave_checkbox") auto-save on pause
@@ -51,7 +62,7 @@ html
           a.expand.entypo-resize-full#spritz_expand(href="#" title="Text Area Resize")
         .progress-bar#spritz_progress
         textarea.demo-words#spritz_words
-          | Spritz!&#13;  This is a jQuery implementation of Spritz technology.&#13;  Reading is inherently  time consuming because your eyes have to move from word to word and line to line. Traditional reading also consumes huge amounts of physical space on a page or screen, which limits reading effectiveness on small displays. Scrolling, pinching, and resizing a reading area doesn’t fix the problem and only frustrates people. Now, with compact text streaming from Spritz, content can be streamed one word at a time, without forcing your eyes to spend time moving around the page. Spritz makes streaming your content easy and more comfortable, especially on small displays. Our “Redicle” technology enhances readability even more by using horizontal lines and hash marks to direct your eyes to the red letter in each word, so you can focus on the content that interests you. Best of all, Spritz’s patent-pending technology can integrate into photos, maps, videos, and websites to promote more effective communication.
+          | Spritz!&#13; This is a jQuery implementation of Spritz technology.&#13; Reading is inherently time consuming because your eyes have to move from word to word and line to line. Traditional reading also consumes huge amounts of physical space on a page or screen, which limits reading effectiveness on small displays. Scrolling, pinching, and resizing a reading area doesn't fix the problem and only frustrates people. Now, with compact text streaming from Spritz, content can be streamed one word at a time, without forcing your eyes to spend time moving around the page. Spritz makes streaming your content easy and more comfortable, especially on small displays. Our "Redicle" technology enhances readability even more by using horizontal lines and hash marks to direct your eyes to the red letter in each word, so you can focus on the content that interests you. Best of all, Spritz's patent-pending technology can integrate into photos, maps, videos, and websites to promote more effective communication.
 
         p Just enter a page URL to start reading:
 
@@ -64,7 +75,9 @@ html
         div.bmcode-container
           textarea.bmcode#bmc(readonly).
 
+    - // Just for fun -- security by obscurity :)
+    script!= "var parsers='" + escapify(JSON.stringify(locals.parsers)) + "';"
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-    script(src='/assets/js/min/index.min.js')
+    script(src='#{locals.assets}js/min/index.min.js')
 
 

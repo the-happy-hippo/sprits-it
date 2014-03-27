@@ -1,0 +1,17 @@
+{
+  "pretty": false,
+
+  "assets": "/assets/",
+
+  "parsers" : [
+    {
+      "name"  : "readability",
+      "uri"   : "https://www.readability.com/api/content/v1/parser",
+      "token" : "29d6e9893943faca8e084f5085c327a6860ed771"
+    },
+    {
+      "name"  : "spritsit",
+      "uri"   : "/text",
+      "token" : "112358"
+    } ]
+}
