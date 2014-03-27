@@ -187,6 +187,14 @@ $c-dark-icon-hover: #999
       content: '\e608'
       color: $c-dark-text
 
+  #erase-storage
+    color: darkred
+    border: 1px solid
+    margin-bottom: 0.5rem
+    margin-left: 2rem
+    padding-bottom: 0px
+    padding-top: 0px
+
   .autosave
     .checkbox
       display: none
@@ -248,15 +256,18 @@ $c-dark-icon-hover: #999
 .alert-container
   width: 100%
   height: 2rem
+  text-align: center
   .alert
     padding: 1rem
-    box-sizing: border-box
-    width: 100%
     text-align: center
-    pointer-events: none
     color: $c-light-icon
     .night
       color: $c-dark-icon
+  #img-loading
+    width: 25px
+    vertical-align: middle
+    padding-bottom: 0.5rem
+    display: none
 
 .bookmarklet-container
   margin-top: 1rem

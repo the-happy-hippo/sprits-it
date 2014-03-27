@@ -1,3 +1,6 @@
+
+include utils
+
 doctype html
 html
   head
@@ -5,12 +8,12 @@ html
 
     meta(charset='UTF-8')
 
-    link(href='css/style.css', media='screen, projection', rel='stylesheet', type='text/css')
+    link(href='#{locals.assets}css/style.css', media='screen, projection', rel='stylesheet', type='text/css')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet prefetch')
 
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(name="keywords", content="open source, speed-reading, speed reading, reading, books, readability, spritz, open spritz")
-    meta(name="description", content="sprits-it! — Awesome Speed-Reading")
+    meta(name="description", content="sprits-it! - Awesome Speed-Reading")
 
   body
 
@@ -30,7 +33,10 @@ html
           a.forward.entypo-right-open#spritz_forward(href="#" title="Jog Forward")
 
       .alert-container
-        .alert#alert
+        span
+          a#article-url(href='#', hidden)
+          img#img-loading(src='#{locals.assets}progress.gif')
+        span.alert#alert
 
       .controls.extra-controls
         .togglable.closed
@@ -39,6 +45,7 @@ html
             span.entypo-search(href="#" title="Smaller")
             a.bigger.entypo-plus#spritz_bigger(href="#" title="Bigger")
             a.light(href="#" title="Change Theme")
+            a#erase-storage(href='#' title='Erase Local Storage') E
           .autosave
             input.checkbox#autosave_checkbox(type="checkbox")
             label.checkbox-label.entypo-cancel#spritz_autosave(for="autosave_checkbox") auto-save on pause
@@ -68,7 +75,8 @@ html
         div.bmcode-container
           textarea.bmcode#bmc(readonly).
 
+    - // Just for fun -- security by obscurity :)
+    script!= "var parsers='" + escapify(JSON.stringify(locals.parsers)) + "';"
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-    script(src='js/min/index.min.js')
-
+    script(src='#{locals.assets}js/min/index.min.js')
 

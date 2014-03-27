@@ -44,4 +44,6 @@ I have started this project purely for educational purposes while having virtual
 
 If you find something stupid that I did &mdash; please don't blame me and never hesitate to point those things out so I can learn from them.
 
+## Disclaimer
 
+`sprits-it!` is not affilated with [Spritz Inc](http://www.spritzinc.com/) in any way. This is an open source, community created project based on publicly available information. We love you!
