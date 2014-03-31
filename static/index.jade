@@ -50,7 +50,7 @@ html
             input.checkbox#autosave_checkbox(type="checkbox")
             label.checkbox-label.entypo-cancel#spritz_autosave(for="autosave_checkbox") auto-save on pause
           div.bookmarklet-container
-            a.bookmarklet#bm(href="").
+            a.bookmarklet#bookmarklet(href="#").
               Sprits It! Bookmarklet
 
         a.toggle.entypo-dot-3(href="#" title="Extra Controls")
@@ -73,7 +73,7 @@ html
         p Or copy the following Javascript code:
 
         div.bmcode-container
-          textarea.bmcode#bmc(readonly).
+          textarea.bmcode#bookmarklet-code(readonly).
 
     - // Just for fun -- security by obscurity :)
     script!= "var parsers='" + escapify(JSON.stringify(locals.parsers)) + "';"

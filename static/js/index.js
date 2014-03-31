@@ -472,10 +472,10 @@ function create_bookmarklet() {
     '="' + this_page_permalink +
     '?url="+encodeURIComponent(d.location.href);' +
     '}catch(e){alert("Please wait until the page has loaded.");}}iptxt();void(0)');
-  $('#bm').attr('href', code);
-  $('#bm').click(function(){ return false; });
-  $('#bmc').val(code);
-  $('#bmc').click(function(){this.focus();this.select();});
+  $('#bookmarklet').attr('href', code);
+  $('#bookmarklet').click(function(){ return false; });
+  $('#bookmarklet-code').val(code);
+  $('#bookmarklet-code').click(function(){this.focus();this.select();});
 }
 
 /* INITIATE */

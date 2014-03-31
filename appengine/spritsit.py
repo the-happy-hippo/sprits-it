@@ -23,7 +23,7 @@ class BaseHandler(webapp2.RequestHandler):
         req_token = self.request.get('token')
 
         if req_token != READ_API_TOKEN:
-            logging.error('TOKEN field is not valid: \'{}\' is not {}',
+            logging.error('TOKEN field is not valid: \'%s\' is not %s',
                 req_token, READ_API_TOKEN)
             webapp2.abort(403) # forbidden
 
@@ -69,8 +69,7 @@ class TextHandler(BaseHandler):
         for field in ['title', 'content']: # 'url'
             value = doc[field]
 
-            logging.debug('Writing field {} of {}'.format(
-                field, type(value)))
+            logging.info('Writing field \'%s\' of %r', field, type(value))
 
             self.response.write(value)
 
