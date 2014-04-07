@@ -1,5 +1,6 @@
 *.log
 *.pot
 *.pyc
+venv
 local_settings.py
 appengine/lib

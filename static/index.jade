@@ -6,14 +6,25 @@ html
   head
     title Sprits It!
 
-    meta(charset='UTF-8')
+    meta(charset='utf-8')
 
-    link(href='#{locals.assets}css/style.css', media='screen, projection', rel='stylesheet', type='text/css')
-    link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet prefetch')
+    meta(name="description" content="sprits-it! - Awesome Speed-Reading")
 
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    meta(name="keywords", content="open source, speed-reading, speed reading, reading, books, readability, spritz, open spritz")
-    meta(name="description", content="sprits-it! - Awesome Speed-Reading")
+    - var keywords = ['speed-reading', 'speed reading', 'reading', 'text', 'open source']
+    - keywords = keywords.concat(['sprits-it', 'spritsit', 'spritz', 'open spritz'])
+
+    meta(name="keywords" content=keywords)
+
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    // Local styles
+    link(href='#{locals.assets}css/style.css' media='screen, projection' rel='stylesheet' type='text/css')
+
+    // Favicon
+    link(href="#{locals.assets}img/favicon.ico" rel="shortcut icon" )
+
+    // Reading font
+    link(href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet prefetch')
 
   body
 
@@ -35,7 +46,7 @@ html
       .alert-container
         span
           a#article-url(href='#', hidden)
-          img#img-loading(src='#{locals.assets}progress.gif')
+          img#img-loading(src='#{locals.assets}img/progress.gif')
         span.alert#alert
 
       .controls.extra-controls
@@ -49,7 +60,7 @@ html
           .autosave
             input.checkbox#autosave_checkbox(type="checkbox")
             label.checkbox-label.entypo-cancel#spritz_autosave(for="autosave_checkbox") auto-save on pause
-          div.bookmarklet-container
+          .bookmarklet-container
             a.bookmarklet#bookmarklet(href="#").
               Sprits It! Bookmarklet
 
@@ -57,27 +68,31 @@ html
 
       .words
         .controls.words-controls
-          a.select.entypo-doc-text#spritz_select(href="#" title="Select All")
-          a.refresh.entypo-cycle#spritz_refresh(href="#" title="Refresh Text")
+          a.select.entypo-doc-text#spritz_select(href="#" title="Home")
+          a.refresh.entypo-cycle#spritz_refresh(href="#" title="Restart")
           a.expand.entypo-resize-full#spritz_expand(href="#" title="Text Area Resize")
         .progress-bar#spritz_progress
-        textarea.demo-words#spritz_words
-          | Spritz!&#13; This is a jQuery implementation of Spritz technology.&#13; Reading is inherently time consuming because your eyes have to move from word to word and line to line. Traditional reading also consumes huge amounts of physical space on a page or screen, which limits reading effectiveness on small displays. Scrolling, pinching, and resizing a reading area doesn't fix the problem and only frustrates people. Now, with compact text streaming from Spritz, content can be streamed one word at a time, without forcing your eyes to spend time moving around the page. Spritz makes streaming your content easy and more comfortable, especially on small displays. Our "Redicle" technology enhances readability even more by using horizontal lines and hash marks to direct your eyes to the red letter in each word, so you can focus on the content that interests you. Best of all, Spritz's patent-pending technology can integrate into photos, maps, videos, and websites to promote more effective communication.
+        article.demo-words#spritz_words
 
-        p Just enter a page URL to start reading:
+        p.centered ~ Enter Page Address to Start Reading ~
 
         form.custom-url-form(name="input-url", action="", method="get")
             button.custom-url-submit Sprits It!
             span: input.custom-url-input(type="text", name="url")
 
-        p Or copy the following Javascript code:
+        //p Or copy the following Javascript code:
+        //div.bmcode-container
+        //  textarea.bmcode#bookmarklet-code(readonly).
 
-        div.bmcode-container
-          textarea.bmcode#bookmarklet-code(readonly).
-
-    - // Just for fun -- security by obscurity :)
+    script.
+      var words_default = ["Spritz!", "This is a jQuery implementation of Spritz technology.",
+        "Reading is inherently time consuming because your eyes have to move from word to word and line to line. Traditional reading also consumes huge amounts of physical space on a page or screen, which limits reading effectiveness on small displays. Scrolling, pinching, and resizing a reading area doesn't fix the problem and only frustrates people. Now, with compact text streaming from Spritz, content can be streamed one word at a time, without forcing your eyes to spend time moving around the page. Spritz makes streaming your content easy and more comfortable, especially on small displays. Our “Redicle” technology enhances readability even more by using horizontal lines and hash marks to direct your eyes to the red letter in each word, so you can focus on the content that interests you. Best of all, Spritz's patent-pending technology can integrate into photos, maps, videos, and websites to promote more effective communication."];
+    -// Just for fun -- security by obscurity :)
     script!= "var parsers='" + escapify(JSON.stringify(locals.parsers)) + "';"
-    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
-    script(src='#{locals.assets}js/min/index.min.js')
+    script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
 
+    if (locals.jsmin)
+      script(src='#{locals.assets}js/min/index.min.js')
+    else
+      script(src='#{locals.assets}js/index.js')
 

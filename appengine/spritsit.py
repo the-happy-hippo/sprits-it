@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import re
 import json
@@ -53,7 +55,9 @@ class BaseHandler(webapp2.RequestHandler):
         return {
             'url'       : url,
             'title'     : doc.short_title(),
-            'content'   : txt,
+            'author'    : None,
+            'word_count': 1,
+            'content'   : '<div>{}</div>'.format(txt),
         }
 
 
@@ -82,8 +86,15 @@ class JsonHandler(BaseHandler):
         # FIXME: Be more specific in CORS; but for now rely on 'token'
         self.response.headers['Access-Control-Allow-Origin'] = '*'
 
+        jsonp = self.request.get('callback').strip()
+
+        if jsonp:
+            self.response.write("%s(" % jsonp)
+
         json.dump(self._create_document(), self.response)
 
+        if jsonp:
+            self.response.write(")")
 
 application = webapp2.WSGIApplication([
 
