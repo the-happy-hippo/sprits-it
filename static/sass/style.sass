@@ -1,6 +1,4 @@
 
-$f-icon: 'Spritz', sans-serif
-
 $c-light-bg: #ddd
 $c-light-field-bg: #eee
 $c-light-markers: #000
@@ -16,6 +14,26 @@ $c-dark-spritz: #bbb
 $c-dark-text: #888
 $c-dark-icon: #444
 $c-dark-icon-hover: #999
+
+$f-icon:                'entypo', sans-serif
+$entypo-fast-backward:  '\23ea'
+$entypo-fast-forward:   '\23e9'
+$entypo-save:           '\1f4be'
+$entypo-left-open:      '\23ea'
+$entypo-play:           '\25b6'
+$entypo-pause:          '\2016'
+$entypo-right-open:     '\23e9'
+$entypo-dot-3:          '\23f6'
+$entypo-minus:          '\2796'
+$entypo-search:         '\1f50d'
+$entypo-plus:           '\2795'
+$entypo-cancel:         '\274c'
+$entypo-home:           '\2302'
+$entypo-cycle:          '\1f504'
+$entypo-moon:           '\263d'
+$entypo-sun:            '\1f506'
+$entypo-check:          '\2713'
+$entypo-trash:          '\e729'
 
 .spritz
   position: relative
@@ -72,7 +90,6 @@ $c-dark-icon-hover: #999
     clear: both
   a
     display: inline-block
-    vertical-align: bottom
     color: $c-light-icon
     text-decoration: none
     transition: color 150ms linear
@@ -106,6 +123,21 @@ $c-dark-icon-hover: #999
       .night &
         background: $c-dark-field-bg
         color: $c-dark-text
+  .wpm
+    position: relative
+    display: inline-block
+    color: $c-dark-text
+    width: 7rem
+    margin: 0
+    padding: 0
+    text-align: center
+    font-weight: 600
+    font-size: 2rem
+    line-height: 4.5rem
+    vertical-align: bottom
+    &::-webkit-inner-spin-button
+      -webkit-appearance: none
+
   input, textarea, button
     box-sizing: border-box
     border: 0
@@ -141,76 +173,61 @@ $c-dark-icon-hover: #999
     width: 4rem
     text-align: center
     font-size: 4rem
+    &:before
+      content: $entypo-pause
     .paused &:before
-      content: '\e601'
+      content: $entypo-play
       position: relative
-      margin-left: -0.4rem
-
-.wpm
-  position: relative
-  display: inline-block
-  width: 7rem
-  margin: 0
-  padding: 0
-  text-align: center
-  font-weight: 600
-  font-size: 2rem
-  line-height: 4rem
-  vertical-align: top
-  &::-webkit-inner-spin-button
-    -webkit-appearance: none
 
 .extra-controls
-  margin: 1rem auto 0
   .toggle
     font-size: 2rem
-    padding: 1rem 2rem
   .togglable
     display: none
 
   .zoom
     font-size: 2rem
+    color: $c-dark-text
     *
       display: inline-block
       padding: 0.6rem
 
   .light
-    font-size: 3rem
+    font-size: 5rem
     font-family: $f-icon
     text-decoration: none
     display: inline-block
     margin-left: 2rem
     &:after
-      content: '\e609'
-      color: $c-light-text
+      content: $entypo-moon
     .night &:after
-      content: '\e608'
-      color: $c-dark-text
+      content: $entypo-sun
 
-  #erase-storage
-    color: darkred
-    border: 1px solid
-    margin-bottom: 0.5rem
+  .erase-storage
+    font-size: 5rem
+    font-family: $f-icon
+    text-decoration: none
+    display: inline-block
     margin-left: 2rem
-    padding-bottom: 0px
-    padding-top: 0px
+    &:before
+      content: $entypo-trash
 
   .autosave
+    color: $c-dark-text
+    line-height: 3rem
     .checkbox
       display: none
       &:checked + .checkbox-label:before
-        content: '\e60a'
+        content: $entypo-check
     .checkbox-label
-      user-select: none
       cursor: pointer
       &:before
         position: relative
         display: inline-block
         margin-right: 1rem
         width: 1.4rem
-        vertical-align: top
         overflow: visible
-        font-size: 1.8rem
+        font-size: 3rem
 
 .words
   max-width: 80%
@@ -238,8 +255,6 @@ $c-dark-icon-hover: #999
     line-height: 2rem
   .refresh
     font-size: 2.6rem
-  .fullscreen & .expand:before
-    content: '\e612'
 
 .alert-container
   width: 100%
@@ -312,6 +327,7 @@ body
 body, input, textarea, button
   font-size: 1.4rem
   font-family: Open Sans, sans-serif
+
 ::selection
   background: $c-light-icon
   color: $c-light-field-bg
@@ -319,42 +335,41 @@ body, input, textarea, button
     background: $c-dark-icon
     color: $c-dark-field-bg
 
-
 @font-face
-  font-family: 'Spritz'
-  src: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2361/spritz.eot?ziiuop')
-  src: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2361/spritz.eot?#iefixziiuop') format('embedded-opentype'), url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2361/spritz.woff?ziiuop') format('woff'), url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2361/spritz.ttf?ziiuop') format('truetype'), url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2361/spritz.svg?ziiuop#spritz') format('svg')
+  /* downloaded from http://www.entypo.com */
+  font-family: "entypo"
   font-weight: normal
   font-style: normal
+  src: url("entypo.eot?#iefix") format("embedded-opentype"), url("entypo.woff") format("woff"), url("entypo.ttf") format("truetype"), url("entypo.svg#entypo") format("svg")
 
 [class*="entypo-"]:before
   font-family: $f-icon
+  font-size: 5rem
 .entypo-fast-backward:before
-  content: '\e606'
+  content: $entypo-fast-backward
 .entypo-fast-forward:before
-  content: '\e605'
+  content: $entypo-fast-forward
 .entypo-save:before
-  content: '\e600'
+  content: $entypo-save
 .entypo-left-open:before
-  content: '\e60e'
-.entypo-pause:before
-  content: '\e602'
+  content: $entypo-left-open
 .entypo-right-open:before
-  content: '\e607'
+  content: $entypo-right-open
 .entypo-dot-3:before
-  content: '\e60b'
+  content: $entypo-dot-3
 .entypo-minus:before
-  content: '\e60d'
+  content: $entypo-minus
 .entypo-search:before
-  content: '\e604'
+  content: $entypo-search
 .entypo-plus:before
-  content: '\e60c'
+  content: $entypo-plus
 .entypo-cancel:before
-  content: '\e603'
-.entypo-doc-text:before
-  content: '\e60f'
+  content: $entypo-cancel
+.entypo-home:before
+  content: $entypo-home
 .entypo-cycle:before
-  content: '\e610'
-.entypo-resize-full:before
-  content: '\e611'
-
+  content: $entypo-cycle
+.entypo-moon:before
+  content: $entypo-moon
+.entypo-sun:before
+  content: $entypo-sun

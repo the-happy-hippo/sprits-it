@@ -41,6 +41,8 @@ function init_default_content() {
 
 function set_content_html() {
     $('#spritz_words')
+      .empty();
+    $('#spritz_words')
       .append( '<header>' + content.title + '</header>' );
     content.text.forEach( function(text) {
       $('#spritz_words')
@@ -215,14 +217,9 @@ function spritz_refresh() {
   word_show();
 };
 
-// FIXME: fix the name
-function spritz_select() {
+function spritz_home() {
   window.location = location.origin + location.pathname;
 };
-
-function spritz_expand() {
-  $('html').toggleClass('fullscreen');
-}
 
 /* AUTOSAVE FUNCTION */
 function spritz_autosave() {
@@ -285,10 +282,8 @@ $('.controls').on('click', 'a, label', function() {
       spritz_autosave(); break;
     case 'spritz_refresh':
       spritz_refresh(); break;
-    case 'spritz_select':
-      spritz_select(); break;
-    case 'spritz_expand':
-      spritz_expand(); break;
+    case 'spritz_home':
+      spritz_home(); break;
   };
   return false;
 });

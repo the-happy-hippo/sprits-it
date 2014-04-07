@@ -34,9 +34,9 @@ html
     .settings
       .controls.settings-controls
         span.speed
-          a.slower.entypo-fast-backward#spritz_slower(href="#" title="Slow Down")
+          a.slower.entypo-minus#spritz_slower(href="#" title="Slow Down")
           input.wpm#spritz_wpm(type="number" value="300" step="50" min="50")
-          a.faster.entypo-fast-forward#spritz_faster(href="#" title="Speed Up")
+          a.faster.entypo-plus#spritz_faster(href="#" title="Speed Up")
         a.save.entypo-save#spritz_save(href="#" title="Save")
         span.interaction
           a.back.entypo-left-open#spritz_back(href="#" title="Jog Back")
@@ -56,7 +56,7 @@ html
             span.entypo-search(href="#" title="Smaller")
             a.bigger.entypo-plus#spritz_bigger(href="#" title="Bigger")
             a.light(href="#" title="Change Theme")
-            a#erase-storage(href='#' title='Erase Local Storage') E
+            a.erase-storage(href='#' title='Erase Local Storage')
           .autosave
             input.checkbox#autosave_checkbox(type="checkbox")
             label.checkbox-label.entypo-cancel#spritz_autosave(for="autosave_checkbox") auto-save on pause
@@ -68,9 +68,8 @@ html
 
       .words
         .controls.words-controls
-          a.select.entypo-doc-text#spritz_select(href="#" title="Home")
+          a.select.entypo-home#spritz_home(href="#" title="Home")
           a.refresh.entypo-cycle#spritz_refresh(href="#" title="Restart")
-          a.expand.entypo-resize-full#spritz_expand(href="#" title="Text Area Resize")
         .progress-bar#spritz_progress
         article.demo-words#spritz_words
 
