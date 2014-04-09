@@ -361,7 +361,7 @@ $('a.toggle').on('click', function() {
 });
 
 /* Erase Local Storage */
-$('#erase-storage').on('click', function() {
+$('.erase-storage').on('click', function() {
   delete localStorage['jqspritz'];
   spritz_alert('erased');
   return false;
