@@ -233,6 +233,8 @@ $entypo-trash:          '\e729'
   margin: 0 auto
   position: relative
   transition: max-width 0.2s linear
+  @media only screen and (max-device-width: 568px)
+    max-width: 100%
   .demo-words
     width: 100%
     transition: height 0.2s linear
@@ -240,6 +242,7 @@ $entypo-trash:          '\e729'
     background-color: $c-light-field-bg
     .night &
       background-color: $c-dark-field-bg
+
 .progress-bar
   height: 2px
   width: 0
@@ -309,6 +312,15 @@ $entypo-trash:          '\e729'
 #spritz_words > header
   font-size: 1.4rem
   font-weight: bold
+
+footer
+  font-size: 1rem
+  color: $c-dark-text
+
+#gh-link
+  float: right
+  margin-right: 1rem
+  color: $c-dark-text
 
 .centered
   text-align: center
