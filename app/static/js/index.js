@@ -284,6 +284,10 @@ $('.controls').on('click', 'a, label', function() {
       spritz_refresh(); break;
     case 'spritz_home':
       spritz_home(); break;
+    case 'spritz_back':
+      spritz_back(); break;
+    case 'spritz_forward':
+      spritz_forward(); break;
   };
   return false;
 });
@@ -320,9 +324,6 @@ function button_flash(btn, time) {
   }, time);
 }
 $(document).on('keyup', function(e) {
-  if (e.target.tagName.toLowerCase() != 'body') {
-    return;
-  };
   switch (e.keyCode) {
     case 32:
       spritz_flip(); button_flash('pause'); break;
@@ -337,9 +338,6 @@ $(document).on('keyup', function(e) {
   };
 });
 $(document).on('keydown', function(e) {
-  if (e.target.tagName.toLowerCase() != 'body') {
-    return;
-  };
   switch (e.keyCode) {
     case 37:
       spritz_back(); button_flash('back'); break;
