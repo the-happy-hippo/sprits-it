@@ -1,105 +1,264 @@
 # -*- coding: utf-8 -*-
-
-import os
 import re
-import json
+import urllib2
+import StringIO
 
-import webapp2
-import urllib
-import logging
+from os import environ
+import logging as _logging
+from json import JSONEncoder
+from types import GeneratorType
 
 import fixpath
 
+from flask import Flask, abort, Response
 from readability import readability
-from readability.readability import Document
+from lxml import html as lhtml
 
-import lxml.html as lhtml
+#-----------------------------------------------------------------------------
 
-# Dumb authorization for now
-READ_API_TOKEN = os.environ['READ_API_TOKEN']
+# Dumb authorization for now (mandatory)
+READ_API_TOKEN = environ['READ_API_TOKEN']
 
-class BaseHandler(webapp2.RequestHandler):
+# Google App Engine disallows dynamically built responses because it
+# wants to know the response content length upfront :(
+ALLOW_STREAMING = environ.get('ALLOW_STREAMING', '1')
 
-    def _create_document(self):
+#-----------------------------------------------------------------------------
 
-        req_token = self.request.get('token')
+# App logger
+log = _logging.getLogger(__name__)
 
-        if req_token != READ_API_TOKEN:
-            logging.error('TOKEN field is not valid: \'%s\' is not %s',
-                req_token, READ_API_TOKEN)
-            webapp2.abort(403) # forbidden
+# Cast to boolean value
+ALLOW_STREAMING = ALLOW_STREAMING.lower() not in ['false', '0']
 
-        url = self.request.get('url')
+# Token validation
+from datetime import datetime, timedelta
 
-        if not url:
-            logging.error('URL parameter is not found in request')
-            webapp2.abort(400) # bad request
+UTC_EPOCH       = datetime(1970, 1, 1)
+MAX_TIME_DELTA  = timedelta(days=1)
 
-        # Read raw html
-        rawhtml = urllib.urlopen(url).read()
+#-----------------------------------------------------------------------------
 
-        # Parse with readability
-        doc = Document(rawhtml)
+class ResponseGenerator:
 
-        # Get readable html
-        html = doc.summary()
+    def __init__(self, mimetype):
+        self._mimetype = mimetype
+        self._outputs = []
 
-        # Reformat as plain text
-        txt = lhtml.tostring(lhtml.fromstring(html), method='text', encoding='utf-8')
+        if mimetype not in ['application/json', 'text/plain']:
+            raise ValueError('Invalid mimetype %r' % mimetype)
 
-        txt = txt.strip()
-        txt = re.sub(r'\s+', r' ', txt, flags=re.MULTILINE)
-        txt = re.sub(r'\)\.', r'). ', txt, flags=re.MULTILINE)
-
-        # Create JSON object
-        return {
-            'url'       : url,
-            'title'     : doc.short_title(),
-            'author'    : None,
-            'word_count': 1,
-            'content'   : '<div>{}</div>'.format(txt),
+        self._headers = {
+            'Content-Type': ('%s; charset=utf-8' % mimetype)
         }
 
+    def add_header(self, header, value):
+        self._headers[header] = value
 
-class TextHandler(BaseHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    def add_output(self, output):
+        """ Add either a string or string generator."""
+        assert isinstance(output, (basestring, GeneratorType))
+        self._outputs.append(output)
 
-        # FIXME: Be more specific in CORS; but for now rely on 'token'
-        self.response.headers['Access-Control-Allow-Origin'] = '*'
+    @classmethod
+    def _flat_generator(cls, iterables):
+        """ Mimic itertools.chain() generator behavior."""
+        for item in iterables:
+            if isinstance(item, basestring):
+                yield item
+            else: # it must be an iterable itself
+                for gitem in cls._flat_generator(item):
+                    yield gitem
 
-        doc = self._create_document()
+    def _get_generator(self):
+        """ Glue a list of generators into a single one."""
+        gen = self._flat_generator(self._outputs)
 
-        for field in ['title', 'content']: # 'url'
-            value = doc[field]
+        if ALLOW_STREAMING:
+            return gen
 
-            logging.info('Writing field \'%s\' of %r', field, type(value))
+        log.warn('Streaming not allowed, serializing in-place.')
 
-            self.response.write(value)
+        rawstr = StringIO.StringIO()
 
-            self.response.write('\n\n')
+        for string in gen:
+            if isinstance(string, unicode):
+                string = string.encode('utf-8')
+            rawstr.write(string)
 
-class JsonHandler(BaseHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'application/json'
+        return rawstr.getvalue()
 
-        # FIXME: Be more specific in CORS; but for now rely on 'token'
-        self.response.headers['Access-Control-Allow-Origin'] = '*'
+    def generate(self):
+        return Response(
+            self._get_generator(),
+            mimetype=self._mimetype,
+            headers=self._headers)
 
-        jsonp = self.request.get('callback').strip()
+def _token_error(token, message):
+    errmsg = "Token '{}' is invalid: {}".format(token, message)
+    raise ValueError(errmsg)
 
-        if jsonp:
-            self.response.write("%s(" % jsonp)
+def _validate_token(request):
 
-        json.dump(self._create_document(), self.response)
+    token = request.args.get('token', 'null')
 
-        if jsonp:
-            self.response.write(")")
+    try:
+        if not token.startswith(READ_API_TOKEN):
+            _token_error(token, 'not %s' % READ_API_TOKEN)
 
-application = webapp2.WSGIApplication([
+        utctime = token.replace(READ_API_TOKEN, '', 1)
 
-    (r'/text', TextHandler),
-    (r'/json', JsonHandler),
+        try:
+            utctime = long(utctime)
+        except ValueError as err:
+            _token_error(token, "cannot parse '{}' ({})".format(
+                utctime, err.message))
 
-], debug=True)
+        ts_req  = UTC_EPOCH + timedelta(milliseconds=utctime)
+        ts_diff = datetime.utcnow() - ts_req
+
+        if abs(ts_diff) > MAX_TIME_DELTA:
+            _token_error(token, 'time diff is {}'.format(ts_diff))
+
+    except ValueError as err:
+        log.exception('Invalid token, sending 403')
+        abort(403) # forbidden
+
+
+def _get_req_url(request):
+
+    url = request.args.get('url')
+
+    if not url:
+        logging.error('URL parameter is not found in request')
+        abort(400) # bad request
+
+    if not url.startswith('http'):
+        url = 'http://' + url;
+
+    return url
+
+def _create_document(url):
+
+    # Configure urllib2
+    httph = urllib2.HTTPHandler(debuglevel=0)
+    httpsh = urllib2.HTTPSHandler(debuglevel=0)
+
+    opener = urllib2.build_opener(httph, httpsh)
+    urllib2.install_opener(opener)
+
+    # Read raw html
+    try:
+        urlreq = urllib2.urlopen(url)
+    except urllib2.URLError as err:
+        log.error('urllib2 URL[%s] error: %s', url, err)
+        abort(400) # bad request
+    except urllib2.HTTPError as err:
+        log.error('urllib2 HTTP error: %s', err)
+        abort(error.code)
+
+    meta = urlreq.info()
+
+    log.info('Opening mime type "%s"', meta.gettype())
+
+    rawhtml = urlreq.read()
+    # Parse with readability
+    doc = readability.Document(rawhtml)
+
+    # Get readable html
+    title, html = doc.short_title(), doc.summary()
+
+    # Reformat as plain text
+    txt = lhtml.tostring(lhtml.fromstring(html),
+        method='text', encoding='utf-8')
+
+    txt = txt.strip()
+    txt = re.sub(r'\s+', r' ', txt, flags=re.MULTILINE)
+    txt = re.sub(r'\)\.', r'). ', txt, flags=re.MULTILINE)
+
+    # Create JSON object
+    return {
+        'url'       : url,
+        'title'     : doc.short_title(),
+        'author'    : None,
+        'word_count': -1,
+        'content'   : '<div>{}</div>'.format(txt),
+    }
+
+
+def _make_json_generator(obj):
+    """ Dynamically generate JSON for an object."""
+    for chunk in JSONEncoder().iterencode(obj):
+        yield chunk
+
+def _get_json(request):
+
+    _validate_token(request)
+
+    doc = _create_document(_get_req_url(request))
+
+    response = ResponseGenerator('application/json')
+
+    jsonp = request.args.get('callback')
+
+    if jsonp:
+        log.info('JSONP is enabled');
+        # FIXME: Be more specific in CORS; for now rely on 'token'
+        response.add_header('Access-Control-Allow-Origin', '*')
+
+    if jsonp:
+        response.add_output("%s(" % jsonp)
+
+    response.add_output(_make_json_generator(doc))
+
+    if jsonp:
+        response.add_output(")")
+
+    return response.generate()
+
+
+def _get_text(request):
+
+    _validate_token(request)
+
+    doc = _create_document(_get_req_url(request))
+
+    response = ResponseGenerator('text/plain')
+
+    for field in ['title', 'url', 'content']:
+        value = doc[field]
+
+        log.debug('Writing field %s of %r', field, type(value))
+
+        response.add_output(value)
+        response.add_output('\n\n')
+
+    return response.generate()
+
+#-----------------------------------------------------------------------------
+
+from flask import request as flask_request
+from flask import render_template
+
+app = Flask(__name__,
+        static_url_path='/assets',
+        static_folder='lib/static')
+
+@app.route('/api')
+def root():
+    return render_template('api.html')
+
+@app.route('/json')
+def json():
+    return _get_json(flask_request)
+
+@app.route('/text')
+def text():
+    return _get_text(flask_request)
+
+def run(port, debug):
+    app.run(host='0.0.0.0', port=port, debug=debug)
+
+if __name__ == '__main__':
+    run(5000, True)
 

@@ -1,0 +1,48 @@
+
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='description', content='api checker')
+    meta(name='author', content='the-happy-hippo')
+
+    title apichecker
+
+    // Favicon
+    link(rel='shortcut icon', href='{{ url_for(\'static\', filename=\'img/favicon.ico\') }}')
+
+    // Bootstrap core CSS
+    link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet', media='screen')
+
+    // Custom styles for this template
+    link(href='{{ url_for(\'static\', filename=\'css/api.css\') }}', rel='stylesheet')
+
+    // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+    // WARNING: Respond.js doesn't work if you view the page via file://
+    != '<!--[if lt IE 9]>'
+    script(src='//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
+    script(src='//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js')
+    != '<![endif]-->'
+
+  body
+    // Main jumbotron for a primary marketing message or call to action
+    .jumbotron
+      h1 ¡Hola!
+
+    form#url-form(role='form', action='/text')
+      .form-group
+        input(name='token', value='', hidden)
+        label(for='addr') Enter URL here:
+        input#url.form-control(type='text', placeholder='address')
+      button#text.btn.btn-default(type='submit') Text
+      span &nbsp;
+      button#json.btn.btn-default(type='submit') JSON
+
+    hr
+
+    footer
+      p &copy; the-happy-hippo 2014
+
+    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
+    script(src='{{ url_for(\'static\', filename=\'js/min/api.min.js\') }}')
+

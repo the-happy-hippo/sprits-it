@@ -4,9 +4,9 @@ include utils
 doctype html
 html
   head
-    title Sprits It!
-
     meta(charset='utf-8')
+
+    title Sprits It!
 
     meta(name="description" content="sprits-it! - Awesome Speed-Reading")
 
@@ -35,7 +35,7 @@ html
       .controls.settings-controls
         span.speed
           a.slower.entypo-minus#spritz_slower(href="#" title="Slow Down")
-          input.wpm#spritz_wpm(type="number" value="300" step="50" min="50")
+          input.wpm#spritz_wpm(type="number" value="300" step="50" min="50" disabled)
           a.faster.entypo-plus#spritz_faster(href="#" title="Speed Up")
         a.save.entypo-save#spritz_save(href="#" title="Save")
         span.interaction
@@ -73,7 +73,7 @@ html
         .progress-bar#spritz_progress
         article.demo-words#spritz_words
 
-        p.centered ~ Enter Page Address to Start Reading ~
+        p.centered ~ Enter Page Address ~
 
         form.custom-url-form(name="input-url", action="", method="get")
             button.custom-url-submit Sprits It!

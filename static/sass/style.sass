@@ -129,11 +129,10 @@ $entypo-trash:          '\e729'
     color: $c-dark-text
     width: 7rem
     margin: 0
-    padding: 0
+    padding: 0 0 0.8rem
     text-align: center
     font-weight: 600
     font-size: 2rem
-    line-height: 4.5rem
     vertical-align: bottom
     &::-webkit-inner-spin-button
       -webkit-appearance: none
@@ -173,6 +172,7 @@ $entypo-trash:          '\e729'
     width: 4rem
     text-align: center
     font-size: 4rem
+    color: $c-dark-text
     &:before
       content: $entypo-pause
     .paused &:before
@@ -187,7 +187,6 @@ $entypo-trash:          '\e729'
 
   .zoom
     font-size: 2rem
-    color: $c-dark-text
     *
       display: inline-block
       padding: 0.6rem
@@ -213,8 +212,8 @@ $entypo-trash:          '\e729'
       content: $entypo-trash
 
   .autosave
-    color: $c-dark-text
     line-height: 3rem
+    color: $c-dark-text
     .checkbox
       display: none
       &:checked + .checkbox-label:before
@@ -287,9 +286,9 @@ $entypo-trash:          '\e729'
     background: $c-light-field-bg
     color: $c-light-text
     pointer-events: auto
+    color: $c-dark-text
     .night &
       background: $c-dark-field-bg
-      color: $c-dark-text
 
 .bmcode-container
   text-align: center
@@ -302,10 +301,10 @@ $entypo-trash:          '\e729'
     resize: none
     overflow: hidden
     background-color: $c-light-field-bg
+    color: $c-dark-text
     .night &
       border: 0
       background: $c-dark-field-bg
-      color: $c-dark-text
 
 #spritz_words > header
   font-size: 1.4rem
@@ -345,6 +344,7 @@ body, input, textarea, button
 [class*="entypo-"]:before
   font-family: $f-icon
   font-size: 5rem
+  color: $c-dark-text
 .entypo-fast-backward:before
   content: $entypo-fast-backward
 .entypo-fast-forward:before

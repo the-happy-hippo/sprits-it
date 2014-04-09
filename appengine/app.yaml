@@ -6,18 +6,48 @@ threadsafe: true
 
 libraries:
 - name: lxml
-  version: "latest"
+  version: latest
+
+- name: jinja2
+  version: latest
+
+- name: markupsafe
+  version: latest
 
 handlers:
+- url: /favicon\.ico
+  static_files: lib/static/img/favicon.ico
+  upload: lib/static/img/favicon\.ico
+
 - url: /read
   static_files: lib/static/index.html
   upload: lib/static/index\.html
+
+- url: /assets/css/(.*ttf)
+  static_files: lib/static/css/\1
+  upload: lib/static/css/(.*\.ttf)
+  mime_type: application/x-font-truetype
+
+- url: /assets/css/(.*svg)
+  static_files: lib/static/css/\1
+  upload: lib/static/css/(.*\.svg)
+  mime_type: image/svg+xml
+
+- url: /assets/css/(.*woff)
+  static_files: lib/static/css/\1
+  upload: lib/static/css/(.*\.woff)
+  mime_type: application/font-woff
+
+- url: /assets/css/(.*eot)
+  static_files: lib/static/css/\1
+  upload: lib/static/css/(.*\.eot)
+  mime_type: application/vng.ms-fontobject
 
 - url: /assets
   static_dir: lib/static/
 
 - url: /.*
-  script: spritsit.application
+  script: spritsit.app
 
 skip_files:
 - ^(.*/)?#.*#$
@@ -31,4 +61,10 @@ skip_files:
 - ^(.*/)?.*\.jade$
 
 env_variables:
-  READ_API_TOKEN: '112358'
+  ALLOW_STREAMING: false
+  READ_API_TOKEN: 112358
+
+inbound_services:
+- warmup
+
+
