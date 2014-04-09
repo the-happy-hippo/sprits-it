@@ -7,9 +7,11 @@ Local storage implementation by Keith Wyland
 
 Spritz Speed Reading V2 - Bookmarklet Edition by Oleg P
 
-Mixed and matched from a fork of http://codepen.io/pouretrebelle/full/reGKw and readability text extraction js from https://github.com/Miserlou/OpenSpritz.
+Mixed and matched from a fork of http://codepen.io/pouretrebelle/full/reGKw
+and readability text extraction js from https://github.com/Miserlou/OpenSpritz.
 
-Use the bookmarklet code from the pen JS to speed-read any web page (tested in Chrome and mobile Safari) with the following API:
+Use the bookmarklet code from the pen JS to speed-read any web page (tested in
+Chrome and mobile Safari) with the following API:
 
 http://codepen.io/the-happy-hippo/full/aDHrl?url=<web_page_url>
 
@@ -19,23 +21,45 @@ var $wpm = $('#spritz_wpm');
 var interval = 60000/$wpm.val();
 var paused = false;
 var $space = $('#spritz_word');
-var i = 0;
 var night = false;
 var zoom = 1;
 var autosave = false;
-var $words = $('#spritz_words');
 var local_spritz = {};
+var content = {};
+var words = [];
+var word_index = 0;
+
+function init_default_content() {
+  content = {
+    title: words_default[0],
+    text: []
+  };
+  for (var i = 1; i < words_default.length; i++) {
+    content.text.push(words_default[i]);
+  }
+}
+
+function set_content_html() {
+    $('#spritz_words')
+      .empty();
+    $('#spritz_words')
+      .append( '<header>' + content.title + '</header>' );
+    content.text.forEach( function(text) {
+      $('#spritz_words')
+        .append('<p>' + text + '</p>');
+    });
+}
 
 function words_load() {
   if (!localStorage.jqspritz) {
+    init_default_content();
+    word_index = 0;
     words_set();
-    word_show(0);
+    word_show();
     word_update();
     spritz_pause(true);
   } else {
     local_spritz = JSON.parse(localStorage['jqspritz']);
-    $words.val(local_spritz.words);
-    i = local_spritz.word;
     if (local_spritz.night) {
       night = true
       $('html').addClass('night');
@@ -48,8 +72,10 @@ function words_load() {
     $wpm.val(local_spritz.wpm);
     interval = 60000/local_spritz.wpm;
     spritz_zoom(0);
+    content = local_spritz.content;
+    word_index = local_spritz.word;
     words_set();
-    word_show(i);
+    word_show();
     word_update();
     spritz_pause(true);
     spritz_alert('loaded');
@@ -57,8 +83,8 @@ function words_load() {
 }
 function words_save() {
   local_spritz = {
-    word: i,
-    words: $words.val(),
+    word: word_index,
+    content: content,
     wpm: $wpm.val(),
     night: night,
     autosave: autosave,
@@ -75,40 +101,45 @@ function words_save() {
 
 /* TEXT PARSING */
 function words_set() {
-  words = $words.val().trim()
-  .replace(/([\u2010-\u2014])(\S)/g, '$1 $2')    // detach some dashes.
-  .replace(/([\.\?\!\;\:\)])/g, '$1 • ') // stumble on punctuation.
-  .split(/\s+/); // shrink long whitespaces and split.
+  set_content_html();
+  words = content.text
+    .join(' ')
+    .trim()
+    .replace(/([\u2010-\u2014])(\S)/g, '$1 $2') // detach some dashes.
+    .replace(/([\.\?\!\;\:\)])/g, '$1 • ') // stumble on punctuation.
+    .split(/\s+/); // shrink long whitespaces and split.
 }
 
 /* ON EACH WORD */
-function word_show(i) {
-  $('#spritz_progress').width(100*i/words.length+'%');
-  var word = words[i];
+function word_show() {
+  if (word_index < 0) word_index = 0;
+  if (word_index >= words.length) word_index = words.length-1;
+  $('#spritz_progress').width(100*word_index/words.length+'%');
+  var word = words[word_index];
   var stop = Math.round((word.length+1)*0.4)-1;
   if (word != '•') {
     $space.html('<div>'+word.slice(0,stop)+'</div><div>'+word[stop]+'</div><div>'+word.slice(stop+1)+'</div>');
   }
 }
 function word_next() {
-  i++;
-  word_show(i);
+  word_index++;
+  word_show();
 }
 function word_prev() {
-  i--;
-  word_show(i);
+  word_index--;
+  word_show();
 }
 
 /* ITERATION FUNCTION */
 function word_update() {
   spritz = setInterval(function() {
     word_next();
-    if (i+1 == words.length) {
+    if (word_index+1 == words.length) {
       setTimeout(function() {
         $space.html('');
         spritz_pause(true);
-        i = 0;
-        word_show(0);
+        word_index = 0;
+        word_show();
       }, interval);
       clearInterval(spritz);
     };
@@ -162,13 +193,13 @@ function spritz_slower() {
 /* JOG FUNCTIONS */
 function spritz_back() {
   spritz_pause();
-  if (i >= 1) {
+  if (word_index >= 1) {
     word_prev();
   };
 }
 function spritz_forward() {
   spritz_pause();
-  if (i < words.length) {
+  if (word_index < words.length) {
     word_next();
   };
 }
@@ -181,16 +212,14 @@ function spritz_zoom(c) {
 function spritz_refresh() {
   clearInterval(spritz);
   words_set();
-  i = 0;
   spritz_pause();
-  word_show(0);
+  word_index = 0;
+  word_show();
 };
-function spritz_select() {
-  $words.select();
+
+function spritz_home() {
+  window.location = location.origin + location.pathname;
 };
-function spritz_expand() {
-  $('html').toggleClass('fullscreen');
-}
 
 /* AUTOSAVE FUNCTION */
 function spritz_autosave() {
@@ -253,10 +282,8 @@ $('.controls').on('click', 'a, label', function() {
       spritz_autosave(); break;
     case 'spritz_refresh':
       spritz_refresh(); break;
-    case 'spritz_select':
-      spritz_select(); break;
-    case 'spritz_expand':
-      spritz_expand(); break;
+    case 'spritz_home':
+      spritz_home(); break;
   };
   return false;
 });
@@ -347,6 +374,7 @@ function get_url_param(name) {
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+// FIXME: decide what to do with this func
 function preproc_text(title, author, body) {
   body = $
     .trim(body)             // Trip trailing and leading whitespace.
@@ -361,24 +389,14 @@ function preproc_text(title, author, body) {
     .replace(/\!/g, '! ');
 }
 
-var parserList = null;
-
-function get_parser(index) {
-  if (parserList == null) {
-    parserList = JSON.parse(parsers);
-  }
-  return parserList[index];
-}
-
-// Uses the Readability API to get the juicy content of the current page.
 function spritzify_url(url) {
-
-  var prefix = 'http'; // poor-man's URL parsing
-
-  if (prefix.length < url.length &&
-         prefix != url.substring(0, prefix.length).toLowerCase())
+  var PREFIX = 'http'; // poor-man's URL parsing
+  if (url.length > PREFIX.length)
   {
-      url = prefix + '://' + url;
+    var urlprefix = url.substring(0, PREFIX.length).toLowerCase();
+    if(urlprefix != PREFIX) {
+      url = PREFIX + '://' + url;
+    }
   }
 
   article_url = document.getElementById('article-url');
@@ -395,74 +413,85 @@ function spritzify_url(url) {
     .add('#img-loading')
     .fadeIn();
 
-  var parser = get_parser(0);
-
-  var apireq = parser.uri + '?token=' + parser.token
-    + '&url=' + url + '&callback=?';
-
-  console.log('Parser "' + parser.name + '", requesting ' + apireq);
-
-  $.getJSON(apireq,
-    function (data) {
-      if(data.error) {
-        spritz_error('Article extraction failed. Try selecting text instead.');
-        return;
-      }
-
-      if(data.word_count == 0) {
-        // Try alternative method then...
-        console.log('Trying alternative API...');
-        return spritzify_url_alt(url);
-      }
-
-      var title = '';
-      if(data.title !== '') {
-        title = data.title + ' ';
-      }
-
-      var author = '';
-      if(data.author !== null) {
-        author = "By " + data.author + '. ';
-      }
-
-      var body = jQuery(data.content).text(); // Textify HTML content.
-      var text_content = preproc_text(title, author, body);
-
-      $words.val(text_content);
-
-      spritz_status('');
-
-      words_set();
-      word_show(0);
-      spritz_pause(true);
-
-    }).error(function() {
-      spritz_error('Article extraction failed. Try selecting text instead.');
-    });
+  spritzify_url_with(url, ['Readability', 'SpritsIt']);
 }
 
-function spritzify_url_alt(url) {
-  var parser = get_parser(1);
+// Uses the Readability API to get the juicy content of the current page.
+function spritzify_url_with(url, parser_names) {
+  try {
 
-  var apireq = parser.uri + '?token=' + parser.token
-    + '&url=' + url + '&callback=?';
+    if(parser_names.length == 0) {
+      throw "No parsers remaining!";
+    }
 
-  console.log('Parser "' + parser.name + '", requesting ' + apireq);
+    var parser_name = parser_names.shift();
+    var parser = get_parser(parser_name);
 
-  $.get(apireq,
-    function (data) {
-      var text_content = preproc_text('', '', data);
+    var apireq = parser.uri + '?token=' + parser.get_token()
+      + '&url=' + encodeURIComponent(url) + '&callback=?';
 
-      $words.val(text_content);
+    parser_name = 'Parser "' + parser.name + '"';
+    console.log(parser_name + ': requesting ' + apireq);
 
-      spritz_status('');
+    jQuery
+    .getJSON(apireq, function (data) {
 
-      words_set();
-      word_show(0);
-      spritz_pause(true);
+        if(data.error) {
+          spritz_error('Article extraction failed.');
+          return;
+        }
 
-    }).error(function() {
-      spritz_error('Article extraction failed. Try selecting text instead.'); });
+        if(data.word_count == 0) {
+          console.log(parser_name + ': word count is zero, trying alternative API...');
+          return spritzify_url_with(url, parser_names);
+        }
+
+        var title = '';
+
+        if(data.title !== '') {
+          title = data.title;
+
+          if(data.author !== null) {
+            title = title + ', by ' + data.author;
+          }
+        }
+
+        var body = jQuery(data.content).text(); // Textify HTML content.
+        var text_content = jQuery.trim(body);
+
+        if (text_content === '') {
+          text_content = data.content;
+        }
+
+        content = {
+          title: title,
+          text: text_content.split(/\n\n/)
+        };
+
+        spritz_status('');
+
+        words_set();
+
+        word_index = 0;
+        word_show();
+
+        spritz_pause(true);
+    })
+    .done(function() {
+      console.log(parser_name + ': done.' );
+    })
+    .fail(function( jqxhr, status_msg, error ) {
+      var errmsg = status_msg + ", " + error;
+      console.log(parser_name + ': fail: ' + errmsg);
+      spritz_error('Article extraction failed.');
+    })
+    .always(function() {
+      console.log(parser_name + ': always.' );
+    })
+  } catch (e) {
+     console.log('Error in spritzify_url: ' + e);
+     spritz_error('Article extraction failed.');
+  }
 }
 
 function create_bookmarklet() {
@@ -472,10 +501,10 @@ function create_bookmarklet() {
     '="' + this_page_permalink +
     '?url="+encodeURIComponent(d.location.href);' +
     '}catch(e){alert("Please wait until the page has loaded.");}}iptxt();void(0)');
-  $('#bm').attr('href', code);
-  $('#bm').click(function(){ return false; });
-  $('#bmc').val(code);
-  $('#bmc').click(function(){this.focus();this.select();});
+  $('#bookmarklet').attr('href', code);
+  $('#bookmarklet').click(function(){ return false; });
+  $('#bookmarklet-code').val(code);
+  $('#bookmarklet-code').click(function(){this.focus();this.select();});
 }
 
 /* INITIATE */
@@ -495,8 +524,8 @@ $(document).ready(function() {
 window.addEventListener("pageshow", function(evt){
   spritz_pause(true);
 }, false);
+
 window.addEventListener("pagehide", function(evt){
   spritz_pause(true);
 }, false);
-
 

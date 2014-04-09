@@ -2,4 +2,4 @@
 *.pot
 *.pyc
 venv
-appengine
+app/lib

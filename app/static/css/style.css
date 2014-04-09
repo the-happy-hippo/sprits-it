@@ -1,0 +1,460 @@
+.spritz {
+  position: relative;
+  max-width: 30rem;
+  padding: 1rem 0 1.2rem;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  margin: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 1em;
+}
+.spritz:before, .spritz:after {
+  content: "";
+  position: absolute;
+  left: 40%;
+  height: 0.8rem;
+  width: 2px;
+  margin-left: -1px;
+  background-color: black;
+}
+.night .spritz {
+  border-color: #555555;
+}
+.night .spritz:before, .night .spritz:after {
+  background-color: #555555;
+}
+.spritz:before {
+  top: 0;
+}
+.spritz:after {
+  bottom: 0;
+}
+
+.spritz-word {
+  font-size: 1.6em;
+  line-height: 1.6em;
+  height: 1.7em;
+  font-weight: 600;
+  color: black;
+}
+.night .spritz-word {
+  color: #bbbbbb;
+}
+.spritz-word div {
+  display: table-cell;
+}
+.spritz-word div:first-child {
+  width: 40%;
+  text-align: right;
+}
+.spritz-word div:nth-child(2) {
+  color: #e60000;
+}
+.night .spritz-word div:nth-child(2) {
+  color: #ff4d4d;
+}
+.spritz-word div:last-child {
+  width: 60%;
+  text-align: left;
+}
+
+.controls {
+  text-align: center;
+}
+.controls:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.controls a {
+  display: inline-block;
+  color: #aaaaaa;
+  text-decoration: none;
+  transition: color 150ms linear;
+}
+.controls a:hover, .controls a.active {
+  color: #777777;
+}
+.night .controls a {
+  color: #444444;
+}
+.night .controls a:hover, .night .controls a.active {
+  color: #999999;
+}
+
+.settings .custom-url-form {
+  width: 100%;
+  overflow: hidden;
+}
+.settings .custom-url-form span {
+  display: block;
+  overflow: hidden;
+}
+.settings .custom-url-form span .custom-url-input {
+  width: 100%;
+  background: #eeeeee;
+}
+.night .settings .custom-url-form span .custom-url-input {
+  background: #191919;
+}
+.settings .custom-url-form .custom-url-submit {
+  margin: 5px;
+  font-size: 1rem;
+  border: 1px solid;
+  background: #eeeeee;
+  color: black;
+  pointer-events: auto;
+  float: right;
+}
+.night .settings .custom-url-form .custom-url-submit {
+  background: #191919;
+  color: #888888;
+}
+.settings .wpm {
+  position: relative;
+  display: inline-block;
+  color: #888888;
+  width: 7rem;
+  margin: 0;
+  padding: 0 0 0.8rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 2rem;
+  vertical-align: bottom;
+}
+.settings .wpm::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.settings input, .settings textarea, .settings button {
+  box-sizing: border-box;
+  border: 0;
+  color: black;
+  background: transparent;
+}
+.night .settings input, .night .settings textarea, .night .settings button {
+  color: #888888;
+}
+.settings input:focus, .settings textarea:focus, .settings button:focus {
+  outline: none;
+}
+
+.settings-controls {
+  max-width: 30rem;
+  margin: 0 auto;
+}
+.settings-controls .speed {
+  float: left;
+}
+.settings-controls .interaction {
+  float: right;
+}
+.settings-controls a {
+  font-size: 3rem;
+  line-height: 4rem;
+}
+.settings-controls .save {
+  transition: opacity 0.2s linear;
+  opacity: 0;
+  font-size: 2.5rem;
+}
+.paused .settings-controls .save {
+  opacity: 1;
+}
+.autosave .settings-controls .save {
+  opacity: 0;
+}
+.settings-controls .save.active {
+  opacity: 0.4 !important;
+}
+.settings-controls .pause {
+  margin: 0;
+  width: 4rem;
+  text-align: center;
+  font-size: 4rem;
+  color: #888888;
+}
+.settings-controls .pause:before {
+  content: "\2016";
+}
+.paused .settings-controls .pause:before {
+  content: "\25b6";
+  position: relative;
+}
+
+.extra-controls .toggle {
+  font-size: 2rem;
+}
+.extra-controls .togglable {
+  display: none;
+}
+.extra-controls .zoom {
+  font-size: 2rem;
+}
+.extra-controls .zoom * {
+  display: inline-block;
+  padding: 0.6rem;
+}
+.extra-controls .light {
+  font-size: 5rem;
+  font-family: "entypo", sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 2rem;
+}
+.extra-controls .light:after {
+  content: "\263d";
+}
+.night .extra-controls .light:after {
+  content: "\1f506";
+}
+.extra-controls .erase-storage {
+  font-size: 5rem;
+  font-family: "entypo", sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 2rem;
+}
+.extra-controls .erase-storage:before {
+  content: "\e729";
+}
+.extra-controls .autosave {
+  line-height: 3rem;
+  color: #888888;
+}
+.extra-controls .autosave .checkbox {
+  display: none;
+}
+.extra-controls .autosave .checkbox:checked + .checkbox-label:before {
+  content: "\2713";
+}
+.extra-controls .autosave .checkbox-label {
+  cursor: pointer;
+}
+.extra-controls .autosave .checkbox-label:before {
+  position: relative;
+  display: inline-block;
+  margin-right: 1rem;
+  width: 1.4rem;
+  overflow: visible;
+  font-size: 3rem;
+}
+
+.words {
+  max-width: 80%;
+  margin: 0 auto;
+  position: relative;
+  transition: max-width 0.2s linear;
+}
+@media only screen and (max-device-width: 568px) {
+  .words {
+    max-width: 100%;
+  }
+}
+.words .demo-words {
+  width: 100%;
+  transition: height 0.2s linear;
+  font-family: Georgia, "Times New Roman";
+  background-color: #eeeeee;
+}
+.night .words .demo-words {
+  background-color: #191919;
+}
+
+.progress-bar {
+  height: 2px;
+  width: 0;
+  background: red;
+  opacity: 0.4;
+}
+
+.words-controls {
+  margin: 0 0 2rem;
+}
+.words-controls a {
+  margin: 0 0.6rem;
+  font-size: 2rem;
+  line-height: 2rem;
+}
+.words-controls .refresh {
+  font-size: 2.6rem;
+}
+
+.alert-container {
+  width: 100%;
+  height: 2rem;
+  text-align: center;
+}
+.alert-container .alert {
+  padding: 1rem;
+  text-align: center;
+  color: #aaaaaa;
+}
+.alert-container .alert .night {
+  color: #444444;
+}
+.alert-container #img-loading {
+  width: 25px;
+  vertical-align: middle;
+  padding-bottom: 0.5rem;
+  display: none;
+}
+
+.bookmarklet-container {
+  margin-top: 1rem;
+  margin-bottom: 0rem;
+}
+.bookmarklet-container .bookmarklet {
+  cursor: move;
+  font-size: 1rem;
+  height: 1rem;
+  line-height: 70%;
+  padding: 0.7rem;
+  text-decoration: none;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+  background: #eeeeee;
+  color: black;
+  pointer-events: auto;
+  color: #888888;
+}
+.night .bookmarklet-container .bookmarklet {
+  background: #191919;
+}
+
+.bmcode-container {
+  text-align: center;
+}
+.bmcode-container .bmcode {
+  width: 100%;
+  height: 8em;
+  border: 1px solid #cccccc;
+  margin: 0;
+  padding: 0;
+  resize: none;
+  overflow: hidden;
+  background-color: #eeeeee;
+  color: #888888;
+}
+.night .bmcode-container .bmcode {
+  border: 0;
+  background: #191919;
+}
+
+#spritz_words > header {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+footer {
+  font-size: 1rem;
+  color: #888888;
+}
+
+#gh-link {
+  float: right;
+  margin-right: 1rem;
+  color: #888888;
+}
+
+.centered {
+  text-align: center;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  background: #dddddd;
+  color: black;
+  transition: background 0.1s linear;
+  margin: 3rem;
+}
+.night body {
+  background: black;
+  color: #888888;
+}
+
+body, input, textarea, button {
+  font-size: 1.4rem;
+  font-family: Open Sans, sans-serif;
+}
+
+::selection {
+  background: #aaaaaa;
+  color: #eeeeee;
+}
+.night ::selection {
+  background: #444444;
+  color: #191919;
+}
+
+@font-face {
+  /* downloaded from http://www.entypo.com */
+  font-family: "entypo";
+  font-weight: normal;
+  font-style: normal;
+  src: url("entypo.eot?#iefix") format("embedded-opentype"), url("entypo.woff") format("woff"), url("entypo.ttf") format("truetype"), url("entypo.svg#entypo") format("svg");
+}
+[class*="entypo-"]:before {
+  font-family: "entypo", sans-serif;
+  font-size: 5rem;
+  color: #888888;
+}
+
+.entypo-fast-backward:before {
+  content: "\23ea";
+}
+
+.entypo-fast-forward:before {
+  content: "\23e9";
+}
+
+.entypo-save:before {
+  content: "\1f4be";
+}
+
+.entypo-left-open:before {
+  content: "\23ea";
+}
+
+.entypo-right-open:before {
+  content: "\23e9";
+}
+
+.entypo-dot-3:before {
+  content: "\23f6";
+}
+
+.entypo-minus:before {
+  content: "\2796";
+}
+
+.entypo-search:before {
+  content: "\1f50d";
+}
+
+.entypo-plus:before {
+  content: "\2795";
+}
+
+.entypo-cancel:before {
+  content: "\274c";
+}
+
+.entypo-home:before {
+  content: "\2302";
+}
+
+.entypo-cycle:before {
+  content: "\1f504";
+}
+
+.entypo-moon:before {
+  content: "\263d";
+}
+
+.entypo-sun:before {
+  content: "\1f506";
+}
