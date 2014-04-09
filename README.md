@@ -11,16 +11,16 @@ The project home page is hosted on [GitHub Pages](http://pages.github.com) at ht
 
 Please visit a live demo here:
 
-> http://the-happy-hippo.github.io/sprits-it/read
+> http://the-happy-hippo.github.io/sprits-it/app/static
 
 To read a web page at ``page_url`` use the following GET query:
-`http://the-happy-hippo.github.io/sprits-it/read/?url=page_url`
+`http://the-happy-hippo.github.io/sprits-it/app/static?url=page_url`
 
 For example:
 
-> http://the-happy-hippo.github.io/sprits-it/read/?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
+> http://the-happy-hippo.github.io/sprits-it/app/static/?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
 
-Alternatively, you migh just grab a _bookmarklet_ at http://the-happy-hippo.github.io/sprits-it/read.
+Alternatively, you migh just grab a _bookmarklet_ at http://the-happy-hippo.github.io/sprits-it/app/static.
 
 ## Contributors
 
