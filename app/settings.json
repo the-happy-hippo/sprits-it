@@ -1,5 +1,5 @@
 {
-  "assets"        : "/assets/",
+  "assets"        : "",
   "jsmin"         : true,
 
   "parsers" : {
