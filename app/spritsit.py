@@ -241,8 +241,7 @@ from flask import request as flask_request
 from flask import render_template
 
 app = Flask(__name__,
-        static_url_path='/assets',
-        static_folder='lib/static')
+        static_url_path='/assets')
 
 @app.route('/api')
 def root():
@@ -260,5 +259,5 @@ def run(port, debug):
     app.run(host='0.0.0.0', port=port, debug=debug)
 
 if __name__ == '__main__':
-    run(5000, True)
+    run(8080, True)
 

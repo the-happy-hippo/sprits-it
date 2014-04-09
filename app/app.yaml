@@ -16,35 +16,35 @@ libraries:
 
 handlers:
 - url: /favicon\.ico
-  static_files: lib/static/img/favicon.ico
-  upload: lib/static/img/favicon\.ico
+  static_files: static/img/favicon.ico
+  upload: static/img/favicon\.ico
 
 - url: /read
-  static_files: lib/static/index.html
-  upload: lib/static/index\.html
+  static_files: static/index.html
+  upload: static/index\.html
 
 - url: /assets/css/(.*ttf)
-  static_files: lib/static/css/\1
-  upload: lib/static/css/(.*\.ttf)
+  static_files: static/css/\1
+  upload: static/css/(.*\.ttf)
   mime_type: application/x-font-truetype
 
 - url: /assets/css/(.*svg)
-  static_files: lib/static/css/\1
-  upload: lib/static/css/(.*\.svg)
+  static_files: static/css/\1
+  upload: static/css/(.*\.svg)
   mime_type: image/svg+xml
 
 - url: /assets/css/(.*woff)
-  static_files: lib/static/css/\1
-  upload: lib/static/css/(.*\.woff)
+  static_files: static/css/\1
+  upload: static/css/(.*\.woff)
   mime_type: application/font-woff
 
 - url: /assets/css/(.*eot)
-  static_files: lib/static/css/\1
-  upload: lib/static/css/(.*\.eot)
+  static_files: static/css/\1
+  upload: static/css/(.*\.eot)
   mime_type: application/vng.ms-fontobject
 
 - url: /assets
-  static_dir: lib/static/
+  static_dir: static/
 
 - url: /.*
   script: spritsit.app
