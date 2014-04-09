@@ -95,7 +95,9 @@ html
     script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
 
     if (locals.jsmin)
+      script(src='#{locals.assets}js/min/utils.min.js')
       script(src='#{locals.assets}js/min/index.min.js')
     else
+      script(src='#{locals.assets}js/utils.js')
       script(src='#{locals.assets}js/index.js')
 

@@ -389,17 +389,6 @@ function preproc_text(title, author, body) {
     .replace(/\!/g, '! ');
 }
 
-function get_parser(name) {
-  if (typeof parsers === 'string') {
-    parsers = JSON.parse(parsers);
-  }
-
-  parser = parsers[name];
-  parser.name = name;
-
-  return parser;
-}
-
 function spritzify_url(url) {
   var PREFIX = 'http'; // poor-man's URL parsing
   if (url.length > PREFIX.length)
@@ -430,10 +419,15 @@ function spritzify_url(url) {
 // Uses the Readability API to get the juicy content of the current page.
 function spritzify_url_with(url, parser_names) {
   try {
+
+    if(parser_names.length == 0) {
+      throw "No parsers remaining!";
+    }
+
     var parser_name = parser_names.shift();
     var parser = get_parser(parser_name);
 
-    var apireq = parser.uri + '?token=' + parser.token
+    var apireq = parser.uri + '?token=' + parser.get_token()
       + '&url=' + encodeURIComponent(url) + '&callback=?';
 
     parser_name = 'Parser "' + parser.name + '"';
@@ -495,7 +489,7 @@ function spritzify_url_with(url, parser_names) {
       console.log(parser_name + ': always.' );
     })
   } catch (e) {
-     console.log('Error in : ' + e);
+     console.log('Error in spritzify_url: ' + e);
      spritz_error('Article extraction failed.');
   }
 }

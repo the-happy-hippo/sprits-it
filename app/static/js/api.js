@@ -5,9 +5,10 @@ $(':submit').on('click', function() {
 
   if (url.trim()) {
     var targeturl = location.origin + '/' + this.id;
-    var token = '112358' + (new Date()).getTime();
 
-    targeturl += '?url=' + url + '&token=' + token;
+    var parser = get_parser('SpritsIt');
+
+    targeturl += '?url=' + url + '&token=' + parser.get_token();
 
     window.location = targeturl;
   }
