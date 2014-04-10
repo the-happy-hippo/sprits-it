@@ -7,20 +7,18 @@ The speed reading technique is currently based on the ideas of [Spritz](http://w
 
 ## Demo
 
-The project home page is hosted on [GitHub Pages](http://pages.github.com) at http://the-happy-hippo.github.io/sprits-it.
+Live demo is hosted at [Google App Engine](http://cloud.google.com/products/app-engine) here:
 
-Please visit a live demo here:
-
-> http://the-happy-hippo.github.io/sprits-it/app/static
+> http://spritsit.appspot.com/read
 
 To read a web page at ``page_url`` use the following GET query:
-`http://the-happy-hippo.github.io/sprits-it/app/static?url=page_url`
+`http://spritsit.appspot.com/read?url=page_url`
 
 For example:
 
-> http://the-happy-hippo.github.io/sprits-it/app/static/?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
+> http://spritsit.appspot.com/read?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
 
-Alternatively, you migh just grab a _bookmarklet_ at http://the-happy-hippo.github.io/sprits-it/app/static.
+Alternatively, you migh just grab a _bookmarklet_ in the settings section of the demo.
 
 ## Contributors
 
