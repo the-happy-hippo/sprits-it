@@ -1,19 +1,20 @@
 doctype html
 html(lang="en")
   head
-    meta(charset="utf-8")
-    meta(http-equiv="X-UA-Compatible", content="chrome=1")
-
     title sprits-it! by the-happy-hippo
+
+    meta(charset="utf-8")
 
     link(rel="stylesheet", href="stylesheets/styles.css")
     link(rel="stylesheet", href="stylesheets/pygment_trac.css")
 
     meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
+    meta(name="keywords", content="open source, speed-reading, speed reading, reading, books, readability, spritz, open spritz")
+    meta(name="description", content="sprits-it! — Awesome Speed-Reading")
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    != '<!--[if lt IE 9]>'
+    script(src="//html5shiv.googlecode.com/svn/trunk/html5.js")
+    != '<![endif]-->'
 
   body
     div.wrapper
@@ -41,11 +42,13 @@ html(lang="en")
         include:md README.md
 
       footer
-        p this project is maintained by
-          a(href="https://github.com/the-happy-hippo") the-happy-hippo
-
+        p This project is maintained by &thinsp;
+          a(href="https://github.com/the-happy-hippo").
+            the-happy-hippo
         p
-          small Hosted on GitHub Pages &mdash; Theme by
-            a(href="https://github.com/orderedlist") orderedlist
+          small Hosted on GitHub Pages &mdash; Theme by &thinsp;
+            a(href="https://github.com/orderedlist").
+              orderedlist
 
     script(src="javascripts/scale.fix.js")
+
