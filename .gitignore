@@ -4,3 +4,4 @@
 venv
 local_settings.py
 app/lib
+tags

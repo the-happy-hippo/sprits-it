@@ -5,3 +5,4 @@ Werkzeug==0.9.4
 cssselect==0.9.1
 itsdangerous==0.24
 lxml==3.3.4
+gunicorn==18.0
