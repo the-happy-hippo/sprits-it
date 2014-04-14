@@ -61,6 +61,7 @@ skip_files:
 - ^(.*/)?.*\.jade$
 
 env_variables:
+  APP_DEBUG: 0
   ALLOW_STREAMING: false
   READ_API_TOKEN: 112358
 

@@ -23,6 +23,12 @@ READ_API_TOKEN = environ['READ_API_TOKEN']
 # wants to know the response content length upfront :(
 ALLOW_STREAMING = environ.get('ALLOW_STREAMING', '1')
 
+# Current app version (mandatory)
+CURRENT_VERSION_ID = environ['CURRENT_VERSION_ID']
+
+# Verbosity level
+APP_DEBUG = environ.get('APP_DEBUG', '0')
+
 #-----------------------------------------------------------------------------
 
 # App logger
@@ -40,6 +46,7 @@ MAX_TIME_DELTA  = timedelta(days=1)
 #-----------------------------------------------------------------------------
 
 class ResponseGenerator:
+    """ Convenience wrapper around Flask response."""
 
     def __init__(self, mimetype):
         self._mimetype = mimetype
@@ -141,8 +148,8 @@ def _get_req_url(request):
 def _create_document(url):
 
     # Configure urllib2
-    httph = urllib2.HTTPHandler(debuglevel=0)
-    httpsh = urllib2.HTTPSHandler(debuglevel=0)
+    httph = urllib2.HTTPHandler(debuglevel=APP_DEBUG)
+    httpsh = urllib2.HTTPSHandler(debuglevel=APP_DEBUG)
 
     opener = urllib2.build_opener(httph, httpsh)
     urllib2.install_opener(opener)
@@ -235,6 +242,9 @@ def _get_text(request):
 
     return response.generate()
 
+def _log_env():
+    log.info('Current version: %s', CURRENT_VERSION_ID)
+
 #-----------------------------------------------------------------------------
 
 from flask import request as flask_request
@@ -242,6 +252,8 @@ from flask import render_template
 
 app = Flask(__name__,
         static_url_path='/assets')
+
+_log_env()
 
 @app.route('/api')
 def root():
