@@ -1,6 +1,7 @@
 *.log
 *.pot
 *.pyc
+log*.txt
 venv
 local_settings.py
 app/lib
