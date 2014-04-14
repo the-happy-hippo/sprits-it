@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import json
 import urllib2
 import StringIO
 
@@ -17,9 +18,6 @@ from lxml import html as lhtml
 
 #-----------------------------------------------------------------------------
 
-# Dumb authorization for now (mandatory)
-READ_API_TOKEN = environ['READ_API_TOKEN']
-
 # Google App Engine disallows dynamically built responses because it
 # wants to know the response content length upfront :(
 ALLOW_STREAMING = environ.get('ALLOW_STREAMING', '1')
@@ -27,22 +25,49 @@ ALLOW_STREAMING = environ.get('ALLOW_STREAMING', '1')
 # Current app version (mandatory)
 CURRENT_VERSION_ID = environ['CURRENT_VERSION_ID']
 
-# Verbosity level
-APP_DEBUG = environ.get('APP_DEBUG', '0')
-
 #-----------------------------------------------------------------------------
 
 # App logger
 log = _logging.getLogger(__name__)
 
-# Cast to boolean value
-ALLOW_STREAMING = ALLOW_STREAMING.lower() not in ['false', '0']
+#-----------------------------------------------------------------------------
+
+def _get_app_settings():
+    """ Read global app settings from a file (in JSON format).
+    """
+    import os.path as path
+
+    fullpath = path.join(path.dirname(__file__), 'settings.json')
+
+    with open(fullpath) as fileobj:
+        app_settings = json.load(fileobj, 'utf-8')
+
+    log.info('App settings: %r', app_settings)
+
+    return app_settings
+
+APP_SETTINGS = _get_app_settings()
+
+#-----------------------------------------------------------------------------
+
+# Debug verbosity level
+APP_DEBUG = APP_SETTINGS['app_debug']
+
+# Dumb authorization for now (mandatory)
+READ_API_TOKEN = APP_SETTINGS['parsers']['SpritsIt']['token']
+
+#-----------------------------------------------------------------------------
 
 # Token validation
 from datetime import datetime, timedelta
 
 UTC_EPOCH       = datetime(1970, 1, 1)
 MAX_TIME_DELTA  = timedelta(days=1)
+
+#-----------------------------------------------------------------------------
+
+# Cast ALLOW_STREAMING to a boolean value
+ALLOW_STREAMING = ALLOW_STREAMING.lower() not in ['false', '0']
 
 #-----------------------------------------------------------------------------
 

@@ -2,6 +2,8 @@
   "assets"        : "/assets/",
   "jsmin"         : true,
 
+  "app_debug"     : false,
+
   "parsers" : {
     "Readability" : {
         "uri"     : "https://www.readability.com/api/content/v1/parser",
