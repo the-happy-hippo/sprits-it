@@ -5,8 +5,9 @@ import StringIO
 
 from os import environ
 import logging as _logging
-from json import JSONEncoder
+
 from types import GeneratorType
+from lazygen import json_generator, flat_string_generator
 
 import fixpath
 
@@ -67,24 +68,14 @@ class ResponseGenerator:
         assert isinstance(output, (basestring, GeneratorType))
         self._outputs.append(output)
 
-    @classmethod
-    def _flat_generator(cls, iterables):
-        """ Mimic itertools.chain() generator behavior."""
-        for item in iterables:
-            if isinstance(item, basestring):
-                yield item
-            else: # it must be an iterable itself
-                for gitem in cls._flat_generator(item):
-                    yield gitem
-
     def _get_generator(self):
-        """ Glue a list of generators into a single one."""
-        gen = self._flat_generator(self._outputs)
+        """ Glue generators into a single one that makes strings."""
+        gen = flat_string_generator(self._outputs)
 
         if ALLOW_STREAMING:
             return gen
 
-        log.warn('Streaming not allowed, serializing in-place.')
+        log.warn('Streaming not allowed, serializing in memory.')
 
         rawstr = StringIO.StringIO()
 
@@ -193,11 +184,6 @@ def _create_document(url):
     }
 
 
-def _make_json_generator(obj):
-    """ Dynamically generate JSON for an object."""
-    for chunk in JSONEncoder().iterencode(obj):
-        yield chunk
-
 def _get_json(request):
 
     _validate_token(request)
@@ -216,7 +202,7 @@ def _get_json(request):
     if jsonp:
         response.add_output("%s(" % jsonp)
 
-    response.add_output(_make_json_generator(doc))
+    response.add_output(json_generator(doc))
 
     if jsonp:
         response.add_output(")")
