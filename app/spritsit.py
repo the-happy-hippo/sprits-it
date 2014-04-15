@@ -5,14 +5,14 @@ import StringIO
 import logging
 
 from types import GeneratorType
-from lazygen import json_generator, flat_string_generator
 from settings import settings
+from extractor import extractor
+
+from lazygen import json_generator, flat_string_generator
 
 import fixpath
 
-from flask import Flask, abort, Response
-from readability import readability
-from lxml import html as lhtml
+from flask import abort, Response
 
 #-----------------------------------------------------------------------------
 
@@ -129,7 +129,7 @@ def _create_document(url):
 
     # Read raw html
     try:
-        urlreq = urllib2.urlopen(url)
+        json_object = extractor.extract(url)
     except urllib2.URLError as err:
         log.error('urllib2 URL[%s] error: %s', url, err)
         abort(400) # bad request
@@ -137,33 +137,7 @@ def _create_document(url):
         log.error('urllib2 HTTP error: %s', err)
         abort(error.code)
 
-    meta = urlreq.info()
-
-    log.info('Opening mime type "%s"', meta.gettype())
-
-    rawhtml = urlreq.read()
-    # Parse with readability
-    doc = readability.Document(rawhtml)
-
-    # Get readable html
-    title, html = doc.short_title(), doc.summary()
-
-    # Reformat as plain text
-    txt = lhtml.tostring(lhtml.fromstring(html),
-        method='text', encoding='utf-8')
-
-    txt = txt.strip()
-    txt = re.sub(r'\s+', r' ', txt, flags=re.MULTILINE)
-    txt = re.sub(r'\)\.', r'). ', txt, flags=re.MULTILINE)
-
-    # Create JSON object
-    return {
-        'url'       : url,
-        'title'     : doc.short_title(),
-        'author'    : None,
-        'word_count': -1,
-        'content'   : '<div>{}</div>'.format(txt),
-    }
+    return json_object
 
 
 def _get_json(request):
@@ -232,6 +206,7 @@ def _startup():
 
 #-----------------------------------------------------------------------------
 
+from flask import Flask
 from flask import request as flask_request
 from flask import render_template
 
