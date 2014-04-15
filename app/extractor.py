@@ -8,7 +8,7 @@ import logging
 
 import fixpath
 
-from lxml import html
+from lxml import html, etree
 from readability import readability
 
 #------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 class Extractor:
 
     def __init__(self):
+        self._xallnodes = etree.XPath('//*')
         self._shrink_re = re.compile(ur'\s+', flags=re.UNICODE)
 
     def extract(self, url):
@@ -58,10 +59,18 @@ class Extractor:
 
         assert isinstance(html_content, unicode)
 
-        txt = html.tostring(
-                html.fromstring(html_content),
-                method='text',
-                encoding='unicode')
+        doc = html.fromstring(html_content)
+
+        # Add padding so that text in adjacent tags wouldn't stick
+        # together. E.g., "<p>Hello<br/>World!</p>" should look as
+        # "Hello World!" and not as "HelloWorld!".
+        for node in self._xallnodes(doc):
+            if node.tail:
+                node.tail = node.tail + ' '
+            else:
+                node.tail = ' '
+
+        txt = html.tostring( doc, method='text', encoding='unicode')
 
         txt = self._shrink_re.sub(' ', txt)
 
