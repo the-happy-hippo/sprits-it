@@ -163,13 +163,6 @@ def _get_req_url(request):
 
 def _create_document(url):
 
-    # Configure urllib2
-    httph = urllib2.HTTPHandler(debuglevel=APP_DEBUG)
-    httpsh = urllib2.HTTPSHandler(debuglevel=APP_DEBUG)
-
-    opener = urllib2.build_opener(httph, httpsh)
-    urllib2.install_opener(opener)
-
     # Read raw html
     try:
         urlreq = urllib2.urlopen(url)
@@ -256,6 +249,21 @@ def _get_text(request):
 def _log_env():
     log.info('Current version: %s', CURRENT_VERSION_ID)
 
+def _urllib_config():
+    # Configure urllib2
+    httph = urllib2.HTTPHandler(debuglevel=APP_DEBUG)
+    httpsh = urllib2.HTTPSHandler(debuglevel=APP_DEBUG)
+    opener = urllib2.build_opener(httph, httpsh)
+
+    urllib2.install_opener(opener)
+
+def _startup():
+    log.info('Starting from %s' % __file__)
+
+    _log_env()
+
+    _urllib_config()
+
 #-----------------------------------------------------------------------------
 
 from flask import request as flask_request
@@ -263,8 +271,6 @@ from flask import render_template
 
 app = Flask(__name__,
         static_url_path='/assets')
-
-_log_env()
 
 @app.route('/api')
 def root():
@@ -280,6 +286,8 @@ def text():
 
 def run(port, debug):
     app.run(host='0.0.0.0', port=port, debug=debug)
+
+_startup()
 
 if __name__ == '__main__':
     run(8080, True)
