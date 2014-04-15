@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import re
-import json
 import urllib2
 import StringIO
-
-from os import environ
-import logging as _logging
+import logging
 
 from types import GeneratorType
 from lazygen import json_generator, flat_string_generator
+from settings import settings
 
 import fixpath
 
@@ -18,43 +16,13 @@ from lxml import html as lhtml
 
 #-----------------------------------------------------------------------------
 
-# Google App Engine disallows dynamically built responses because it
-# wants to know the response content length upfront :(
-ALLOW_STREAMING = environ.get('ALLOW_STREAMING', '1')
-
-# Current app version (mandatory)
-CURRENT_VERSION_ID = environ['CURRENT_VERSION_ID']
-
-#-----------------------------------------------------------------------------
-
 # App logger
-log = _logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 #-----------------------------------------------------------------------------
-
-def _get_app_settings():
-    """ Read global app settings from a file (in JSON format).
-    """
-    import os.path as path
-
-    fullpath = path.join(path.dirname(__file__), 'settings.json')
-
-    with open(fullpath) as fileobj:
-        app_settings = json.load(fileobj, 'utf-8')
-
-    log.info('App settings: %r', app_settings)
-
-    return app_settings
-
-APP_SETTINGS = _get_app_settings()
-
-#-----------------------------------------------------------------------------
-
-# Debug verbosity level
-APP_DEBUG = APP_SETTINGS['app_debug']
 
 # Dumb authorization for now (mandatory)
-READ_API_TOKEN = APP_SETTINGS['parsers']['SpritsIt']['token']
+READ_API_TOKEN = settings.parsers['SpritsIt']['token']
 
 #-----------------------------------------------------------------------------
 
@@ -63,11 +31,6 @@ from datetime import datetime, timedelta
 
 UTC_EPOCH       = datetime(1970, 1, 1)
 MAX_TIME_DELTA  = timedelta(days=1)
-
-#-----------------------------------------------------------------------------
-
-# Cast ALLOW_STREAMING to a boolean value
-ALLOW_STREAMING = ALLOW_STREAMING.lower() not in ['false', '0']
 
 #-----------------------------------------------------------------------------
 
@@ -97,7 +60,8 @@ class ResponseGenerator:
         """ Glue generators into a single one that makes strings."""
         gen = flat_string_generator(self._outputs)
 
-        if ALLOW_STREAMING:
+        if settings.allow_streaming:
+            log.info('Streaming is allowed, serializing on the fly.')
             return gen
 
         log.warn('Streaming not allowed, serializing in memory.')
@@ -247,18 +211,20 @@ def _get_text(request):
     return response.generate()
 
 def _log_env():
-    log.info('Current version: %s', CURRENT_VERSION_ID)
+    log.info('Current version: %s', settings.app_version)
 
 def _urllib_config():
     # Configure urllib2
-    httph = urllib2.HTTPHandler(debuglevel=APP_DEBUG)
-    httpsh = urllib2.HTTPSHandler(debuglevel=APP_DEBUG)
+    debug_level = settings.app_debug
+
+    httph = urllib2.HTTPHandler(debuglevel=debug_level)
+    httpsh = urllib2.HTTPSHandler(debuglevel=debug_level)
     opener = urllib2.build_opener(httph, httpsh)
 
     urllib2.install_opener(opener)
 
 def _startup():
-    log.info('Starting from %s' % __file__)
+    log.info('Starting %s' % __file__)
 
     _log_env()
 
