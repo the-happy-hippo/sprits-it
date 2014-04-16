@@ -151,7 +151,7 @@ def _get_json(request):
     jsonp = request.args.get('callback')
 
     if jsonp:
-        log.info('JSONP is enabled');
+        log.debug('JSONP is enabled');
         # FIXME: Be more specific in CORS; for now rely on 'token'
         response.add_header('Access-Control-Allow-Origin', '*')
 

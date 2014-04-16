@@ -91,7 +91,7 @@ class Extractor:
         rdd_args = urllib.urlencode( dict(url=url, token=self._rdd_api_key) )
         rdd_req  = self._rdd_api_url + '?' + rdd_args
 
-        rdd_json = Extractor._get_raw_content(rdd_req)
+        rdd_json = Extractor._get_raw_content(rdd_req, 'application/json')
         rdd_doc  = CleanDocument.from_json(json.load(rdd_json))
 
         return rdd_doc
@@ -113,12 +113,41 @@ class Extractor:
 
 
     @staticmethod
-    def _get_raw_content(url):
+    def _get_raw_content(url, mime=None, allowgzip=True):
+        """ Get data from given url.
 
-        resp = urllib2.urlopen(url)
+        Return file-like object so it can be fed to json.load()
+        """
+
+        req = urllib2.Request(url)
+
+        if mime:
+            req.add_header('Accept', mime)
+
+        if allowgzip:
+            req.add_header('Accept-Encoding', 'gzip')
+
+        resp = urllib2.urlopen(req)
+
         meta = resp.info()
 
-        log.info('Opening mime type "%s"', meta.gettype())
+        mime_type = meta.gettype()
+
+        log.debug('Opening mime type "%s"', mime_type)
+
+        content_type = meta.getheader('content-type', '')
+        content_encoding = meta.getheader('content-encoding', '')
+
+        log.debug('Content type: "%s"', content_type)
+        log.debug('Content encoding: "%s"', content_encoding)
+
+        # we'll gunzip even if not allowgzip :)
+        if content_encoding.lower() == 'gzip':
+            log.debug('Un-zipping compressed gzip response.')
+
+            gunzip_gen = lazygen.gunzip_generator(resp)
+
+            return lazygen.StringGenStream(gunzip_gen)
 
         return resp
 
