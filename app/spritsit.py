@@ -8,7 +8,7 @@ from types import GeneratorType
 from settings import settings
 from extractor import extractor
 
-from lazygen import json_generator, flat_string_generator
+from lazygen import flat_string_generator
 
 import fixpath
 
@@ -158,7 +158,7 @@ def _get_json(request):
     if jsonp:
         response.add_output("%s(" % jsonp)
 
-    response.add_output(json_generator(doc))
+    response.add_output(doc.json_generator())
 
     if jsonp:
         response.add_output(")")
@@ -175,7 +175,7 @@ def _get_text(request):
     response = ResponseGenerator('text/plain')
 
     for field in ['title', 'url', 'content']:
-        value = doc[field]
+        value = getattr(doc,field)
 
         log.debug('Writing field %s of %r', field, type(value))
 

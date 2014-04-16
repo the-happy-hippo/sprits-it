@@ -1,8 +1,6 @@
 
 - // Define reusable JS functions
 
-- var shft_def = 'function shft(txt,offs){if(offs<0)offs+=txt.length;return(txt+txt).substring(offs,offs+txt.length);}';
-
 - function escapify(s) {
 -   var r = '';
 -   for(var i = 0;i < s.length; i++) {
@@ -13,3 +11,12 @@
 -   return r;
 - }
 
+- function filter(dict, key) {
+-   copy = {}
+-   for (var k in dict) {
+-     if(k !== key) {
+-       copy[k] = dict[k];
+-     }
+-   }
+-   return copy;
+- }

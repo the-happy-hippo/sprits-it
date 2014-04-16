@@ -411,7 +411,7 @@ function spritzify_url(url) {
     .add('#img-loading')
     .fadeIn();
 
-  spritzify_url_with(url, ['Readability', 'SpritsIt']);
+  spritzify_url_with(url, ['SpritsIt']);
 }
 
 // Uses the Readability API to get the juicy content of the current page.
