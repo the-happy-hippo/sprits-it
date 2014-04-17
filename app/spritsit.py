@@ -172,10 +172,6 @@ def _get_json(request):
 
     if jsonp:
         log.debug('JSONP is enabled');
-        # FIXME: Be more specific in CORS; for now rely on 'token'
-        response.add_header('Access-Control-Allow-Origin', '*')
-
-    if jsonp:
         response.add_output("%s(" % jsonp)
 
     response.add_output(doc.json_generator())
@@ -233,8 +229,16 @@ from flask import render_template
 app = Flask(__name__,
         static_url_path='/assets')
 
+@app.route('/favicon.ico')
+def favicon():
+    return app.send_static_file('img/favicon.ico')
+
+@app.route('/read')
+def index():
+    return render_template('index.html', version=settings.app_version)
+
 @app.route('/api')
-def root():
+def api():
     return render_template('api.html')
 
 @app.route('/json')

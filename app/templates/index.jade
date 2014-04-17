@@ -85,7 +85,9 @@ html
 
         footer
           span &copy; the-happy-hippo 2014
-          a#gh-link(href='https://github.com/the-happy-hippo/sprits-it') View the project on GitHub
+          #gh-link
+            span version {{ version }} &nbsp;&nbsp;
+            a(href='https://github.com/the-happy-hippo/sprits-it') View the project on GitHub
 
     script.
       var words_default = ["Spritz!", "This is a jQuery implementation of Spritz technology.",

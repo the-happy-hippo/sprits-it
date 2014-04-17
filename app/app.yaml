@@ -15,14 +15,6 @@ libraries:
   version: latest
 
 handlers:
-- url: /favicon\.ico
-  static_files: static/img/favicon.ico
-  upload: static/img/favicon\.ico
-
-- url: /read
-  static_files: static/index.html
-  upload: static/index\.html
-
 - url: /assets/css/(.*ttf)
   static_files: static/css/\1
   upload: static/css/(.*\.ttf)
