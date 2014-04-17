@@ -125,7 +125,7 @@ class Extractor:
             req.add_header('Accept', mime)
 
         if allowgzip:
-            req.add_header('Accept-Encoding', 'gzip')
+            req.add_header('Accept-Encoding', 'gzip,deflate')
 
         resp = urllib2.urlopen(req)
 
@@ -142,8 +142,8 @@ class Extractor:
         log.debug('Content encoding: "%s"', content_encoding)
 
         # we'll gunzip even if not allowgzip :)
-        if content_encoding.lower() == 'gzip':
-            log.debug('Un-zipping compressed gzip response.')
+        if content_encoding.lower() in ['gzip', 'deflate']:
+            log.debug('Decompressing gzip/deflate response.')
 
             gunzip_gen = lazygen.gunzip_generator(resp)
 

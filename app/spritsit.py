@@ -8,7 +8,7 @@ from types import GeneratorType
 from settings import settings
 from extractor import extractor
 
-from lazygen import flat_string_generator
+from lazygen import flat_string_generator, compression_generator
 
 import fixpath
 
@@ -37,8 +37,9 @@ MAX_TIME_DELTA  = timedelta(days=1)
 class ResponseGenerator:
     """ Convenience wrapper around Flask response."""
 
-    def __init__(self, mimetype):
+    def __init__(self, mimetype, compression=None):
         self._mimetype = mimetype
+        self._compression = compression
         self._outputs = []
 
         if mimetype not in ['application/json', 'text/plain']:
@@ -47,6 +48,9 @@ class ResponseGenerator:
         self._headers = {
             'Content-Type': ('%s; charset=utf-8' % mimetype)
         }
+
+        if compression:
+            self.add_header('content-encoding', compression)
 
     def add_header(self, header, value):
         self._headers[header] = value
@@ -59,6 +63,10 @@ class ResponseGenerator:
     def _get_generator(self):
         """ Glue generators into a single one that makes strings."""
         gen = flat_string_generator(self._outputs)
+
+        if self._compression:
+            log.debug('Compression allowed, method: %s', self._compression)
+            gen = compression_generator(gen, self._compression)
 
         if settings.allow_streaming:
             log.info('Streaming is allowed, serializing on the fly.')
@@ -139,6 +147,15 @@ def _create_document(url):
 
     return json_object
 
+def _get_compression(accept_encodings):
+    encodings = [enc.strip().lower()
+        for enc in accept_encodings.split(',')]
+
+    for enc in encodings:
+        if enc in ['deflate', 'gzip']:
+            return enc
+
+    return None
 
 def _get_json(request):
 
@@ -146,7 +163,10 @@ def _get_json(request):
 
     doc = _create_document(_get_req_url(request))
 
-    response = ResponseGenerator('application/json')
+    compression = _get_compression(
+        request.headers.get('accept-encoding', ''))
+
+    response = ResponseGenerator('application/json', compression)
 
     jsonp = request.args.get('callback')
 
