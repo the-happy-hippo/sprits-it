@@ -454,16 +454,11 @@ function spritzify_url_with(url, parser_names) {
           }
         }
 
-        var body = jQuery(data.content).text(); // Textify HTML content.
-        var text_content = jQuery.trim(body);
-
-        if (text_content === '') {
-          text_content = data.content;
-        }
+        var text_content = jQuery.trim(data.content);
 
         content = {
           title: title,
-          text: text_content.split(/\n\n/)
+          text: text_content.split(/\n/)
         };
 
         spritz_status('');

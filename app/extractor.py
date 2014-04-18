@@ -23,6 +23,13 @@ log = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------------
 
+_regex = {
+    'paragraphs': re.compile(ur'\n\s*\n\s*|\n\s\s+', flags=re.UNICODE),
+    'spaces': re.compile(ur'\s+', flags=re.UNICODE),
+}
+
+#------------------------------------------------------------------------------
+
 class CleanDocument:
     """ Readable document fetched from `source_url`.
     """
@@ -63,7 +70,6 @@ class Extractor:
 
     def __init__(self):
         self._xallnodes = etree.XPath('//*')
-        self._shrink_re = re.compile(ur'\s+', flags=re.UNICODE)
 
         # Params for working with Readability APIs
         rdd_parser = settings.parsers['Readability']
@@ -94,6 +100,9 @@ class Extractor:
         rdd_json = Extractor._get_raw_content(rdd_req, 'application/json')
         rdd_doc  = CleanDocument.from_json(json.load(rdd_json))
 
+        # convert html to text
+        rdd_doc.content = self._get_text(rdd_doc.content)
+
         return rdd_doc
 
     def _update_content(self, doc):
@@ -109,7 +118,7 @@ class Extractor:
 
         doc.title = doc.title or title
         doc.word_count = float('NaN')
-        doc.content = u'<div>{}</div>'.format(text_content)
+        doc.content = text_content
 
 
     @staticmethod
@@ -153,6 +162,9 @@ class Extractor:
 
     def _get_text(self, html_content):
 
+        if not html_content:
+            return html_content
+
         assert isinstance(html_content, unicode)
 
         doc = html.fromstring(html_content)
@@ -168,9 +180,13 @@ class Extractor:
 
         txt = html.tostring( doc, method='text', encoding='unicode')
 
-        txt = self._shrink_re.sub(' ', txt)
+        # Little cleanup surgery
+        paragraphs = _regex['paragraphs'].split(txt)
 
-        return txt.strip()
+        paragraphs = [ _regex['spaces'].sub(' ', parag.strip())
+                for parag in paragraphs ]
+
+        return '\n'.join(paragraphs)
 
 
 # Global extractor instance

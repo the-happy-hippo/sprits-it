@@ -2,7 +2,7 @@
 include utils
 
 doctype html
-html
+html(lang="us")
   head
     meta(charset='utf-8')
 
@@ -85,9 +85,8 @@ html
 
         footer
           span &copy; the-happy-hippo 2014
-          #gh-link
-            span version {{ version }} &nbsp;&nbsp;
-            a(href='https://github.com/the-happy-hippo/sprits-it') View the project on GitHub
+          a#gh-link(href='https://github.com/the-happy-hippo/sprits-it') View the project on GitHub
+          p#app-version version: {{ version }}
 
     script.
       var words_default = ["Spritz!", "This is a jQuery implementation of Spritz technology.",
