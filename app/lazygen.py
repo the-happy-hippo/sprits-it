@@ -12,8 +12,13 @@ from zlib import compressobj, decompressobj, MAX_WBITS
 from gzip import GzipFile
 from StringIO import StringIO
 
-def json_generator(obj):
+def json_generator(obj, skipkeys=False):
     """Return generator that produces JSON strings for given obj.
+
+    If ``skipkeys`` is ``True``, then dict keys that are not of a basic type
+    (:class:`str`, :class:`unicode`, :class:`int`, :class:`long`,
+    :class:`float`, :class:`bool`, ``None``) will be skipped instead of
+    raising a :exc:`TypeError`.
 
     Example::
 
@@ -21,7 +26,7 @@ def json_generator(obj):
         '{|"a"|: |1|, |"b"|: |2|}'
 
     """
-    for chunk in JSONEncoder().iterencode(obj):
+    for chunk in JSONEncoder(skipkeys=skipkeys).iterencode(obj):
         yield chunk
 
 
