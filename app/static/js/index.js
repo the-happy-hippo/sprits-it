@@ -507,6 +507,11 @@ $(document).ready(function() {
 
   custom_url = get_url_param('url');
 
+  if (custom_url.match(/www\.gutenberg\.org/gi)) {
+    alert(gutenberg_alert.join('\n\n'));
+    custom_url = ''
+  }
+
   if(custom_url) {
     spritzify_url(custom_url);
   } else {

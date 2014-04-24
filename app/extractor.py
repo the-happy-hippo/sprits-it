@@ -97,6 +97,8 @@ class Extractor:
         rdd_args = urllib.urlencode( dict(url=url, token=self._rdd_api_key) )
         rdd_req  = self._rdd_api_url + '?' + rdd_args
 
+        log.info('Getting Readability content from %s', rdd_req)
+
         rdd_json = Extractor._get_raw_content(rdd_req, 'application/json')
         rdd_doc  = CleanDocument.from_json(json.load(rdd_json))
 
