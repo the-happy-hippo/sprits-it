@@ -4,6 +4,7 @@ MarkupSafe==0.19
 Werkzeug==0.9.4
 chardet==2.2.1
 cssselect==0.9.1
+guess-language==0.2
 gunicorn==18.0
 itsdangerous==0.24
 lxml==3.3.4

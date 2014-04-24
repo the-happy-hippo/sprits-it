@@ -16,6 +16,9 @@ import fixpath
 from lxml import html, etree
 from readability import readability
 
+import pyphen
+from guess_language import guessLanguage
+
 #------------------------------------------------------------------------------
 
 # App logger
@@ -26,7 +29,10 @@ log = logging.getLogger(__name__)
 _regex = {
     'paragraphs': re.compile(ur'\n\s*\n\s*|\n\s\s+', flags=re.UNICODE),
     'spaces': re.compile(ur'\s+', flags=re.UNICODE),
+    'longdash': re.compile(ur'\-{2,}', flags=re.UNICODE),
 }
+
+XPATH_ALL_NODES = etree.XPath('//*')
 
 #------------------------------------------------------------------------------
 
@@ -39,6 +45,7 @@ class CleanDocument:
         self.title = title
         self.content = content
         self.author = author
+        self._pyphen = None
 
     @property
     def source_url(self):
@@ -61,15 +68,76 @@ class CleanDocument:
     def json_generator(self):
         """Return generator that produces JSON strings.
         """
-        json_object = dict((k, v) for (k, v) in self.__dict__.iteritems())
+        json_object = dict((k, v) for (k, v) in self.__dict__.iteritems()
+                if not k.startswith('_'))
 
         return lazygen.json_generator(json_object)
 
+    def textify(self):
+        """ Transform html content to plain text.
+        """
+        if not self.content:
+            return
+
+        assert isinstance(self.content, unicode)
+
+        doc = html.fromstring(self.content)
+
+        # Add padding so that text in adjacent tags wouldn't stick
+        # together. E.g., "<p>Hello<br/>World!</p>" should look as
+        # "Hello World!" and not as "HelloWorld!".
+        for node in XPATH_ALL_NODES(doc):
+            if node.tail:
+                node.tail = node.tail + ' '
+            else:
+                node.tail = ' '
+
+        txt = html.tostring(doc, method='text', encoding='unicode')
+
+        # Little cleanup surgery
+        paragraphs = _regex['paragraphs'].split(txt)
+        pcleaned = []
+
+        for parag in paragraphs:
+            words   = _regex['spaces'].split(parag)
+            wclean  = []
+
+            for word in words:
+                if word: # it must have been stripped by split()
+                    wclean.extend(self._clean_word(word, parag))
+
+            pcleaned.append(' '.join(wclean))
+
+        self.content = '\n'.join(pcleaned)
+
+    def _clean_word(self, word, wordcorpus):
+        outlist = []
+
+        dash_separated = _regex['longdash'].split(word)
+
+        if len(dash_separated) >= 2:
+            for subword in dash_separated:
+                outlist.extend(self._clean_word(subword, wordcorpus))
+                outlist.append(u'\u2014') # mdash
+            return outlist[:-1]
+
+        if len(word) <= settings.max_word_len:
+            return [word]
+        else:
+            if not self._pyphen:
+                lang = guessLanguage(wordcorpus)
+
+                log.info('Language guessed: %s', lang)
+
+                if lang == 'UNKNOWN': lang = 'en' # fallback
+
+                self._pyphen = pyphen.Pyphen(lang=lang)
+
+            return [self._pyphen.multiwrap(word, settings.max_word_len)]
 
 class Extractor:
 
     def __init__(self):
-        self._xallnodes = etree.XPath('//*')
 
         # Params for working with Readability APIs
         rdd_parser = settings.parsers['Readability']
@@ -103,7 +171,7 @@ class Extractor:
         rdd_doc  = CleanDocument.from_json(json.load(rdd_json))
 
         # convert html to text
-        rdd_doc.content = self._get_text(rdd_doc.content)
+        rdd_doc.textify()
 
         return rdd_doc
 
@@ -116,12 +184,12 @@ class Extractor:
 
         title, html_content = rddoc.short_title(), rddoc.summary()
 
-        text_content = self._get_text(html_content)
-
         doc.title = doc.title or title
         doc.word_count = float('NaN')
-        doc.content = text_content
+        doc.content = html_content
 
+        # convert html to text
+        doc.textify()
 
     @staticmethod
     def _get_raw_content(url, mime=None, allowgzip=True):
@@ -161,35 +229,6 @@ class Extractor:
             return lazygen.StringGenStream(gunzip_gen)
 
         return resp
-
-    def _get_text(self, html_content):
-
-        if not html_content:
-            return html_content
-
-        assert isinstance(html_content, unicode)
-
-        doc = html.fromstring(html_content)
-
-        # Add padding so that text in adjacent tags wouldn't stick
-        # together. E.g., "<p>Hello<br/>World!</p>" should look as
-        # "Hello World!" and not as "HelloWorld!".
-        for node in self._xallnodes(doc):
-            if node.tail:
-                node.tail = node.tail + ' '
-            else:
-                node.tail = ' '
-
-        txt = html.tostring( doc, method='text', encoding='unicode')
-
-        # Little cleanup surgery
-        paragraphs = _regex['paragraphs'].split(txt)
-
-        paragraphs = [ _regex['spaces'].sub(' ', parag.strip())
-                for parag in paragraphs ]
-
-        return '\n'.join(paragraphs)
-
 
 # Global extractor instance
 extractor = Extractor()

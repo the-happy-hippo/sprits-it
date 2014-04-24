@@ -98,6 +98,16 @@ function words_save() {
   }
 }
 
+// Currently Javascript RegExp lacks propert Unicode handling for non-English
+// scripts. There are two options to solve that: either using custom Javascript
+// RegExp extensions (such as http://xregexp.com) or preprocessing with Python
+// re.UNICODE on the server. In the meantime, stick with a garage-made work around:
+var rePunctnGen = /[\"\'\,\.\!\?\:\;\*\~\+\-_¡¿‘’“”«»„\[\]\(\)\{\}…©®™]+/g;
+var rePunctnBeg = new RegExp('^' + rePunctnGen.source);
+var rePunctnEnd = new RegExp(rePunctnGen.source + '$');
+
+// The following trailing punctuation pattern will add a delay while reading.
+var rePunctnTrl = /([\"\'\.\!\?\:\;\*\~\+\-_¡¿‘’“”«»„\[\]\(\)\{\}…©®™]+)\s/g;
 
 /* TEXT PARSING */
 function words_set() {
@@ -106,21 +116,56 @@ function words_set() {
     .join(' ')
     .trim()
     .replace(/([\u2010-\u2014])(\S)/g, '$1 $2') // detach some dashes.
-    .replace(/([\.\?\!\;\:\)])/g, '$1 � ') // stumble on punctuation.
+    .replace(/(\S)\-(\S)/g, '$1- $2')           // split hyphens
+    .replace(rePunctnTrl, '$1 \u204b ')         // stumble on punctuation.
     .split(/\s+/); // shrink long whitespaces and split.
 }
 
 /* ON EACH WORD */
 function word_show() {
-  if (word_index < 0) word_index = 0;
   if (word_index >= words.length) word_index = words.length-1;
+  if (word_index < 0) word_index = 0;
+
   $('#spritz_progress').width(100*word_index/words.length+'%');
+
   var word = words[word_index];
-  var stop = Math.round((word.length+1)*0.4)-1;
-  if (word != '�') {
-    $space.html('<div>'+word.slice(0,stop)+'</div><div>'+word[stop]+'</div><div>'+word.slice(stop+1)+'</div>');
+
+  if (word == '\u204b') {
+    return;
   }
+
+  // don't count leading/trailing punctuation
+  var word_start = 0;
+  var punctnBeg = word.match(rePunctnBeg);
+  if (punctnBeg) {
+    word_start += punctnBeg[0].length;
+  }
+
+  var word_end  = word.length;
+  var punctnEnd = word.match(rePunctnEnd);
+  if (punctnEnd) {
+    word_end -= punctnEnd[0].length;
+  }
+
+  var word_length = word_end - word_start;
+
+  if (word_length <= 0 ) {
+    return;
+  }
+
+  var stop = Math.round((word_length+1)*0.4)-1;
+
+  stop += word_start;
+
+  $space.html('<div>'
+    + word.slice(0,stop)
+    + '</div><div>'
+    + word[stop]
+    + '</div><div>'
+    + word.slice(stop+1)
+    + '</div>');
 }
+
 function word_next() {
   word_index++;
   word_show();

@@ -3,6 +3,7 @@
   "jsmin"         : true,
 
   "app_debug"     : false,
+  "max_word_len"  : 13,
 
   "parsers" : {
     "Readability" : {
