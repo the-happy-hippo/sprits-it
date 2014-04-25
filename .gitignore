@@ -1,7 +1,9 @@
 *.log
 *.pot
 *.pyc
+log*.txt
 venv
+tmp
 local_settings.py
 app/lib
 tags

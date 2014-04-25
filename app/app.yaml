@@ -1,5 +1,5 @@
 application: spritsit
-version: 0-1-beta
+version: v0-2-beta
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -15,14 +15,6 @@ libraries:
   version: latest
 
 handlers:
-- url: /favicon\.ico
-  static_files: static/img/favicon.ico
-  upload: static/img/favicon\.ico
-
-- url: /read
-  static_files: static/index.html
-  upload: static/index\.html
-
 - url: /assets/css/(.*ttf)
   static_files: static/css/\1
   upload: static/css/(.*\.ttf)
@@ -50,19 +42,18 @@ handlers:
   script: spritsit.app
 
 skip_files:
+- tmp
 - ^(.*/)?#.*#$
 - ^(.*/)?.*~$
 - ^(.*/)?.*\.py[co]$
 - ^(.*/)?.*/RCS/.*$
 - ^(.*/)?\..*$
 - ^(.*/)?.*\.cmd$
-- ^(.*/)?.*\.json$
 - ^(.*/)?.*\.sass$
 - ^(.*/)?.*\.jade$
 
 env_variables:
   ALLOW_STREAMING: false
-  READ_API_TOKEN: 112358
 
 inbound_services:
 - warmup
