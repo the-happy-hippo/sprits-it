@@ -5,20 +5,47 @@ sprits-it! — Awesome Speed-Reading
 
 The speed reading technique is currently based on the ideas of [Spritz](http://www.spritzinc.com/) described in their [blog](http://www.spritzinc.com/blog). At the time of this writing [Spritz](http://www.spritzinc.com/) had virtually nothing to offer to [iOs](http://www.apple.com/ios) device users to play with. This project is targeted specifically on usability in Safari and Chrome mobile browsers but should ultimately work well on other platforms.
 
+## Screenshots
+
+<img src='https://github.com/the-happy-hippo/sprits-it/raw/gh-pages/app/static/img/cap_alice.gif'
+    width='300px' height='450px' alt='English-language Demo'></img>
+    &nbsp;
+<img src='https://github.com/the-happy-hippo/sprits-it/raw/gh-pages/app/static/img/cap_geroi.gif'
+    width='300px' height='450px' alt='Russian-language Demo'></img>
+
+## Features
+
+- Speed-read any web page in your browser (well, _almost_ any) — also on mobile;
+- Easy-to-install _bookmarklet_;
+- Configurable reading speed, play/pause/rewind, nite mode;
+- Settings, text and reading position can be saved in browser local storage and restored next time you visit;
+- Uses Readability™ technology for text extraction and cleanup (HTML boilerplate removal);
+- Hyphenation for long words with language auto-detection;
+- Punctuation aware;
+- _Coming soon_: e-book reading (`ePub` format);
+- _Coming soon_: word and context highlighting.
+
 ## Demo
 
-Live demo is hosted at [Google App Engine](http://cloud.google.com/products/app-engine) here:
+Live demo is hosted on [Heroku](https://www.heroku.com) here:
 
-> http://spritsit.appspot.com/read
+> http://sprits-it.herokuapp.com/read
 
 To read a web page at ``page_url`` use the following GET query:
-`http://spritsit.appspot.com/read?url=page_url`
+`http://sprits-it.herokuapp.com/read?url=page_url`
 
 For example:
 
-> http://spritsit.appspot.com/read?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
+> http://sprits-it.herokuapp.com/read?url=http%3A%2F%2Fwww.spritzinc.com%2Fthe-science
 
 Alternatively, you migh just grab a _bookmarklet_ in the settings section of the demo.
+
+## Changelog
+
+Currently development betas only — simply because the project lacks sufficient user base to be tested extensively. Sorry… and you can help fixing that!
+
+- `0.1-beta` — Initial release — client/server version
+- `0.2-beta` — Added hyphenation and punctuation handling; improved text extraction
 
 ## Contributors
 
