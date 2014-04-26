@@ -16,14 +16,16 @@ The speed reading technique is currently based on the ideas of [Spritz](http://w
 ## Features
 
 - Speed-read any web page in your browser (well, _almost_ any) — also on mobile;
-- Easy-to-install _bookmarklet_;
-- Configurable reading speed, play/pause/rewind, nite mode;
+- Configurable reading speed, play/pause/rewind, nite mode, reading progress bar;
 - Settings, text and reading position can be saved in browser local storage and restored next time you visit;
 - Uses Readability™ technology for text extraction and cleanup (HTML boilerplate removal);
 - Hyphenation for long words with language auto-detection;
 - Punctuation aware;
-- _Coming soon_: e-book reading (`ePub` format);
-- _Coming soon_: word and context highlighting.
+- Easy-to-install _bookmarklet_;
+- _Coming soon_: e-book reading (in _ePub_ format);
+- _Coming soon_: _PDF_ text extraction;
+- _Coming soon_: _RTL_ languages (Hebrew, Arabic) handling;
+- _Coming soon_: word and context highlighting and navigation.
 
 ## Demo
 
@@ -40,12 +42,14 @@ For example:
 
 Alternatively, you migh just grab a _bookmarklet_ in the settings section of the demo.
 
+Official project homepage is hosted by GitHub Pages [here](http://the-happy-hippo.github.io/sprits-it).
+
 ## Changelog
 
 Currently development betas only — simply because the project lacks sufficient user base to be tested extensively. Sorry… and you can help fixing that!
 
-- `0.1-beta` — Initial release — client/server version
-- `0.2-beta` — Added hyphenation and punctuation handling; improved text extraction
+- [v0.2-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.2-beta) — Hyphenation and punctuation handling; improved text extraction.
+- [v0.1-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.1-beta) — Initial release.
 
 ## Contributors
 
