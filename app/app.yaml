@@ -1,5 +1,5 @@
 application: spritsit
-version: v0-2-beta
+version: v0-3-beta
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -37,6 +37,7 @@ handlers:
 
 - url: /assets
   static_dir: static/
+  application_readable: true
 
 - url: /.*
   script: spritsit.app
