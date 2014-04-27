@@ -233,6 +233,11 @@ app = Flask(__name__,
 def favicon():
     return app.send_static_file('img/favicon.ico')
 
+@app.route('/sitemap')
+def sitemap():
+    return app.send_static_file('sitemap.txt')
+
+@app.route('/')
 @app.route('/read')
 def index():
     return render_template('index.html', version=settings.app_version)
