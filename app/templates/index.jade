@@ -20,6 +20,9 @@ html(lang="en")
     if !locals.assets
       - throw "ERROR: JSON settings object undefined!"
 
+    // Validate browser support
+    script#modernizr(src='#{locals.assets}js/min/modernizr.custom.min.js' sinkurl='{{ url_for(\'unsupported\') }}')
+
     // Local styles
     link(href='#{locals.assets}css/style.css' media='screen, projection' rel='stylesheet' type='text/css')
 

@@ -237,6 +237,10 @@ def favicon():
 def sitemap():
     return app.send_static_file('sitemap.txt')
 
+@app.route('/unsupported')
+def unsupported():
+    return app.send_static_file('unsupported.html')
+
 @app.route('/')
 @app.route('/read')
 def index():
