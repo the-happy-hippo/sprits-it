@@ -2,7 +2,7 @@
 include utils
 
 doctype html
-html(lang="us")
+html(lang="en")
   head
     meta(charset='utf-8')
 
@@ -42,9 +42,10 @@ html(lang="us")
           a.faster.entypo-plus#spritz_faster(href="#" title="Speed Up")
         a.save.entypo-save#spritz_save(href="#" title="Save")
         span.interaction
-          a.back.entypo-left-open#spritz_back(href="#" title="Jog Back")
+          script var rwtitles = ["Forward", "Backward"]; //TODO:localization
+          a.back.entypo-left-open#spritz_back(href="#" title="")
           a.pause.entypo-pause#spritz_pause(href="#" title="Pause/Play")
-          a.forward.entypo-right-open#spritz_forward(href="#" title="Jog Forward")
+          a.forward.entypo-right-open#spritz_forward(href="#" title="")
 
       .alert-container
         span
@@ -74,6 +75,7 @@ html(lang="us")
           a.select.entypo-home#spritz_home(href="#" title="Home")
           a.refresh.entypo-cycle#spritz_refresh(href="#" title="Restart")
         .progress-bar#spritz_progress
+        .progress-after
         article.demo-words#spritz_words
 
         p.centered ~ Enter Page Address ~

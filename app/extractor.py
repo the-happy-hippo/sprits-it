@@ -17,7 +17,7 @@ from lxml import html, etree
 from readability import readability
 
 import pyphen
-from guess_language import guessLanguage
+from guess_language import guess_language
 
 #------------------------------------------------------------------------------
 
@@ -36,8 +36,72 @@ XPATH_ALL_NODES = etree.XPath('//*')
 
 #------------------------------------------------------------------------------
 
+LANG_FALLBACK = 'en'
+LANG_UNKNOWN  = guess_language.UNKNOWN
+HYPH_FALLBACK = pyphen.Pyphen(lang=LANG_FALLBACK)
+
+class LangGuess:
+    """ Try guessing document language with ``guess_language``.
+    """
+
+    def __init__(self):
+        self._lang   = None
+        self._corpus = None
+        self._wcount = 0
+        self._pyphen = None
+
+    def get_lang(self):
+
+        lang = self._guess_lang()
+
+        return lang if lang else LANG_FALLBACK
+
+    def update_corpus(self, words, wordcount):
+
+        if (wordcount > self._wcount) and (wordcount <= 256 or
+               self._wcount <= 3):
+            self._corpus, self._wcount = words, wordcount
+
+    def _guess_lang(self, wordcontext=None):
+
+        if not self._lang:
+            words = self._corpus
+
+            if not words:
+                words = wordcontext
+
+            lang = guess_language.guessLanguage(words)
+
+            log.info('Guessed lang: %s', lang)
+
+            if self._lang == LANG_UNKNOWN:
+                lang = None
+
+            self._lang = lang
+
+        return self._lang
+
+    def get_hyphenator(self, wordcontext):
+
+        if self._pyphen:
+            return self._pyphen
+
+        try:
+            lang = self._guess_lang(wordcontext)
+
+            self._pyphen = pyphen.Pyphen(lang=lang)
+
+            return self._pyphen
+
+        except Exception as err:
+            log.error("Couldn't create hyphenator for %r: %r", lang, err)
+
+        return HYPH_FALLBACK
+
+#------------------------------------------------------------------------------
+
 class CleanDocument:
-    """ Readable document fetched from `source_url`.
+    """ Readable document fetched from ``source_url``.
     """
 
     def __init__(self, source_url, title=None, content=None, author=None):
@@ -45,7 +109,9 @@ class CleanDocument:
         self.title = title
         self.content = content
         self.author = author
-        self._pyphen = None
+        self.lang = None
+        self.direction = None
+        self._lang = LangGuess()
 
     @property
     def source_url(self):
@@ -96,7 +162,7 @@ class CleanDocument:
 
         # Little cleanup surgery
         paragraphs = _regex['paragraphs'].split(txt)
-        pcleaned = []
+        pcleaned, word_count = [], 0
 
         for parag in paragraphs:
             words   = _regex['spaces'].split(parag)
@@ -106,34 +172,39 @@ class CleanDocument:
                 if word: # it must have been stripped by split()
                     wclean.extend(self._clean_word(word, parag))
 
+            parag_len = len(wclean)
+
+            word_count += parag_len
+
+            self._lang.update_corpus(parag, parag_len)
+
             pcleaned.append(' '.join(wclean))
 
         self.content = '\n'.join(pcleaned)
+        self.lang = self._lang.get_lang()
+        self.word_count = word_count
 
-    def _clean_word(self, word, wordcorpus):
+        if self.lang in ['he', 'ar']:
+            self.direction = 'rtl'
+        elif not self.direction:
+            self.direction = 'ltr'
+
+    def _clean_word(self, word, wordcontext):
         outlist = []
 
         dash_separated = _regex['longdash'].split(word)
 
         if len(dash_separated) >= 2:
             for subword in dash_separated:
-                outlist.extend(self._clean_word(subword, wordcorpus))
+                outlist.extend(self._clean_word(subword, wordcontext))
                 outlist.append(u'\u2014') # mdash
             return outlist[:-1]
 
         if len(word) <= settings.max_word_len:
             return [word]
         else:
-            if not self._pyphen:
-                lang = guessLanguage(wordcorpus)
-
-                log.info('Language guessed: %s', lang)
-
-                if lang == 'UNKNOWN': lang = 'en' # fallback
-
-                self._pyphen = pyphen.Pyphen(lang=lang)
-
-            return [self._pyphen.multiwrap(word, settings.max_word_len)]
+            hyphenator = self._lang.get_hyphenator(wordcontext)
+            return [hyphenator.multiwrap(word, settings.max_word_len)]
 
 class Extractor:
 
@@ -185,7 +256,6 @@ class Extractor:
         title, html_content = rddoc.short_title(), rddoc.summary()
 
         doc.title = doc.title or title
-        doc.word_count = float('NaN')
         doc.content = html_content
 
         # convert html to text
