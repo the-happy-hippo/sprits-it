@@ -39,15 +39,32 @@ function init_default_content() {
   }
 }
 
+function set_direction() {
+  var rtl = content.direction === 'rtl';
+  var dir = rtl ? 'rtl' : 'ltr';
+
+  $('html').toggleClass('rtl', rtl);
+
+  $('#spritz')
+    .attr('dir', dir);
+  $('#spritz_words')
+    .attr('dir', dir)
+  $('#spritz_forward')
+    .attr('title', rtl ? rwtitles[1] : rwtitles[0]);
+  $('#spritz_back')
+    .attr('title', rtl ? rwtitles[0] : rwtitles[1]);
+}
+
 function set_content_html() {
+  set_direction();
+  $('#spritz_words')
+    .empty();
+  $('#spritz_words')
+    .append( '<header>' + content.title + '</header>' );
+  content.text.forEach( function(text) {
     $('#spritz_words')
-      .empty();
-    $('#spritz_words')
-      .append( '<header>' + content.title + '</header>' );
-    content.text.forEach( function(text) {
-      $('#spritz_words')
-        .append('<p>' + text + '</p>');
-    });
+      .append('<p>' + text + '</p>');
+  });
 }
 
 function words_load() {
@@ -109,6 +126,9 @@ var rePunctnEnd = new RegExp(rePunctnGen.source + '$');
 // The following trailing punctuation pattern will add a delay while reading.
 var rePunctnTrl = /([\"\'\.\!\?\:\;\*\~\+\-_¡¿‘’“”«»„\[\]\(\)\{\}…©®™]+)\s/g;
 
+// In RTL digits and non-RTL words must run LTR
+var reInverseRtl = /^[\d\w\u0660-\u066c]+$/;
+
 /* TEXT PARSING */
 function words_set() {
   set_content_html();
@@ -155,15 +175,31 @@ function word_show() {
 
   var stop = Math.round((word_length+1)*0.4)-1;
 
-  stop += word_start;
+  // for rtl language invert direction of non-rtl runs
+  var invert_rtl = (content.direction ==='rtl') &&
+    word.slice(word_start, word_end).match(reInverseRtl);
 
-  $space.html('<div>'
-    + word.slice(0,stop)
-    + '</div><div>'
-    + word[stop]
-    + '</div><div>'
-    + word.slice(stop+1)
-    + '</div>');
+  if (invert_rtl) {
+    stop = word_end - stop - 1;
+
+    $space.html('<div dir="ltr">'
+      + word.slice(stop+1)
+      + '</div><div dir="ltr">'
+      + word[stop]
+      + '</div><div dir="ltr">'
+      + word.slice(0,stop)
+      + '</div>');
+  } else {
+    stop += word_start;
+
+    $space.html('<div>'
+      + word.slice(0,stop)
+      + '</div><div>'
+      + word[stop]
+      + '</div><div>'
+      + word.slice(stop+1)
+      + '</div>');
+  }
 }
 
 function word_next() {
@@ -248,6 +284,18 @@ function spritz_forward() {
     word_next();
   };
 }
+function spritz_back_bidi() {
+  if(content.direction==='rtl')
+    spritz_forward();
+  else
+    spritz_back();
+}
+function spritz_forward_bidi() {
+  if(content.direction==='rtl')
+    spritz_back();
+  else
+    spritz_forward();
+}
 
 /* WORDS FUNCTIONS */
 function spritz_zoom(c) {
@@ -330,9 +378,9 @@ $('.controls').on('click', 'a, label', function() {
     case 'spritz_home':
       spritz_home(); break;
     case 'spritz_back':
-      spritz_back(); break;
+      spritz_back_bidi(); break;
     case 'spritz_forward':
-      spritz_forward(); break;
+      spritz_forward_bidi(); break;
   };
   return false;
 });
@@ -340,12 +388,12 @@ $('.controls').on('mousedown', 'a', function() {
   switch (this.id) {
     case 'spritz_back':
       spritz_jog_back = setInterval(function() {
-        spritz_back();
+        spritz_back_bidi();
       }, 100);
       break;
     case 'spritz_forward':
       spritz_jog_forward = setInterval(function() {
-        spritz_forward();
+        spritz_forward_bidi();
       }, 100);
       break;
   };
@@ -489,20 +537,25 @@ function spritzify_url_with(url, parser_names) {
           return spritzify_url_with(url, parser_names);
         }
 
+        console.log(parser_name + ': language = ' + data.lang);
+        console.log(parser_name + ': word count = ' + data.word_count);
+
         var title = '';
 
         if(data.title !== '') {
           title = data.title;
 
-          if(data.author !== null) {
+          if(data.author !== null && data.lang === 'en') {
             title = title + ', by ' + data.author;
           }
         }
 
         var text_content = jQuery.trim(data.content);
+        var text_direction = data.direction || 'ltr';
 
         content = {
           title: title,
+          direction: text_direction,
           text: text_content.split(/\n/)
         };
 

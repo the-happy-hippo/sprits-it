@@ -2,7 +2,7 @@
 include utils
 
 doctype html
-html(lang="us")
+html(lang="en")
   head
     meta(charset='utf-8')
 
@@ -19,6 +19,9 @@ html(lang="us")
 
     if !locals.assets
       - throw "ERROR: JSON settings object undefined!"
+
+    // Validate browser support
+    script#modernizr(src='#{locals.assets}js/min/modernizr.custom.min.js' sinkurl='{{ url_for(\'unsupported\') }}')
 
     // Local styles
     link(href='#{locals.assets}css/style.css' media='screen, projection' rel='stylesheet' type='text/css')
@@ -42,9 +45,10 @@ html(lang="us")
           a.faster.entypo-plus#spritz_faster(href="#" title="Speed Up")
         a.save.entypo-save#spritz_save(href="#" title="Save")
         span.interaction
-          a.back.entypo-left-open#spritz_back(href="#" title="Jog Back")
+          script var rwtitles = ["Forward", "Backward"]; //TODO:localization
+          a.back.entypo-left-open#spritz_back(href="#" title="")
           a.pause.entypo-pause#spritz_pause(href="#" title="Pause/Play")
-          a.forward.entypo-right-open#spritz_forward(href="#" title="Jog Forward")
+          a.forward.entypo-right-open#spritz_forward(href="#" title="")
 
       .alert-container
         span
@@ -74,6 +78,7 @@ html(lang="us")
           a.select.entypo-home#spritz_home(href="#" title="Home")
           a.refresh.entypo-cycle#spritz_refresh(href="#" title="Restart")
         .progress-bar#spritz_progress
+        .progress-after
         article.demo-words#spritz_words
 
         p.centered ~ Enter Page Address ~
@@ -109,4 +114,13 @@ html(lang="us")
     else
       script(src='#{locals.assets}js/utils.js')
       script(src='#{locals.assets}js/index.js')
+
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-50414046-2', 'spritsit.appspot.com');
+      ga('send', 'pageview');
 

@@ -1,0 +1,33 @@
+
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='description', content='Browser Unsupported')
+    meta(name='author', content='the-happy-hippo')
+
+    title Browser Unsupported
+
+    if !locals.assets
+      - throw "ERROR: JSON settings object undefined!"
+
+    // Favicon
+    link(rel="shortcut icon" href="#{locals.assets}img/favicon.ico")
+
+    // Custom styles for this template
+    style.
+      body{
+        font-family: Tahoma,Geneva,Arial,sans-serif;
+        text-align: center;
+        color: #505050;
+        max-width: 50%;
+        background: url("#{locals.assets}img/jbg.gif") no-repeat fixed
+      }
+
+  body
+
+    h3 OOPS!
+    h3 YOUR BROWSER IS NOT SUPPORTED.
+
+    p To view this experience, please upgrade your browser.
+
