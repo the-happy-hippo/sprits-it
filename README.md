@@ -57,6 +57,15 @@ Currently development betas only — simply because the project lacks sufficient
   - Improved text extraction;
 - [v0.1-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.1-beta) — Initial release.
 
+## Project Motto
+
+This project is managed according to the following book (in Russian):
+
+<img src='https://github.com/the-happy-hippo/sprits-it/raw/gh-pages/app/static/img/book.jpg'
+    width='70%' alt='The Project Book' title='The Project Book'></img>
+
+Cheers!
+
 ## Contributors
 
 The bootstrap code was imported from a [CodePen](http://codepen.io) snippet at http://codepen.io/the-happy-hippo/pen/aDHrl which in turn had been forked from a great Pen by [Charlotte Dann](http://codepen.io/pouretrebelle) at http://codepen.io/pouretrebelle/pen/reGKw with javascript cherrypicking for [Readability](https://www.readability.com) text extraction from [OpenSpritz](https://github.com/Miserlou/OpenSpritz) project by [Rich Jones](https://github.com/Miserlou)(@miserlou).
