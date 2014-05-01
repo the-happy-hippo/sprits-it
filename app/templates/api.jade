@@ -39,6 +39,11 @@ html(lang='en')
       footer{margin-left:5px}
 
   body
+    // Validate IE support
+    != '<!--[if lt IE 9]>'
+    script window.location.href = '{{ url_for('unsupported') }}';
+    != '<![endif]-->'
+
     // Main jumbotron for a primary marketing message or call to action
     .jumbotron
       h1 ¡Hola!

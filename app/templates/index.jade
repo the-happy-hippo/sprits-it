@@ -34,6 +34,11 @@ html(lang="en")
 
   body
 
+    // Validate IE support
+    != '<!--[if lt IE 9]>'
+    script window.location.href = '{{ url_for('unsupported') }}';
+    != '<![endif]-->'
+
     .spritz#spritz
       .spritz-word#spritz_word
 
