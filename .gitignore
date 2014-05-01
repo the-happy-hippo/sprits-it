@@ -2,4 +2,5 @@
 *.pot
 *.pyc
 venv
-app/lib
+app
+tags
