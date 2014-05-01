@@ -127,7 +127,7 @@ var rePunctnEnd = new RegExp(rePunctnGen.source + '$');
 var rePunctnTrl = /([\"\'\.\!\?\:\;\*\~\+\-_¡¿‘’“”«»„\[\]\(\)\{\}…©®™]+)\s/g;
 
 // In RTL digits and non-RTL words must run LTR
-var reInverseRtl = /^[\d\w\u0660-\u066c]+$/;
+var reInverseRtl = /^[\d\w\u0660-\u066c\.\,]+$/;
 
 /* TEXT PARSING */
 function words_set() {
