@@ -8,3 +8,4 @@ guess-language==0.2
 gunicorn==18.0
 itsdangerous==0.24
 lxml==3.3.4
+six==1.6.1

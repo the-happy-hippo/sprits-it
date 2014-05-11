@@ -4,6 +4,10 @@ import urllib2
 import StringIO
 import logging
 
+try:
+    import local_settings
+except ImportError: pass
+
 from types import GeneratorType
 from settings import settings
 from extractor import extractor

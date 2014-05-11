@@ -9,6 +9,7 @@ that yields string objects when calling ``next()``.
 from sys import maxsize
 from json import JSONEncoder
 from zlib import compressobj, decompressobj, MAX_WBITS
+from io import BytesIO, SEEK_SET, SEEK_END
 from gzip import GzipFile
 from StringIO import StringIO
 
@@ -185,6 +186,81 @@ class StringGenStream:
                     n = 0 # stop
 
         return ''.join(buffer)
+
+def _ceil_div(a, b):
+    return (a + b - 1) / b
+
+def _align_up(a, b):
+    return _ceil_div(a, b) * b
+
+class BufferedRandomReader:
+    """Create random-access, read-only buffered stream adapter from a sequential
+    input stream which does not support random access (i.e., ```seek()```)
+
+    Example::
+
+        >>> stream = BufferedRandomReader(BytesIO('abc'))
+        >>> print stream.read(2)
+        ab
+        >>> stream.seek(0)
+        0L
+        >>> print stream.read()
+        abc
+
+    """
+
+    def __init__(self, fin, chunk_size=512):
+        self._fin = fin
+        self._buf = BytesIO()
+        self._eof = False
+        self._chunk_size = chunk_size
+
+    def tell(self):
+        return self._buf.tell()
+
+    def read(self, n=-1):
+        """Read at most ``n`` bytes from the file (less if the ```read``` hits
+        end-of-file before obtaining size bytes).
+
+        If ``n`` argument is negative or omitted, read all data until end of
+        file is reached. The bytes are returned as a string object. An empty
+        string is returned when end of file is encountered immediately.
+        """
+        pos = self._buf.tell()
+        end = self._buf.seek(0, SEEK_END)
+
+        if n < 0:
+            if not self._eof:
+                self._buf.write(self._fin.read())
+                self._eof = True
+        else:
+            req = pos + n - end
+
+            if req > 0 and not self._eof: # need to grow
+                bcount = _align_up(req, self._chunk_size)
+                bytes  = self._fin.read(bcount)
+
+                self._buf.write(bytes)
+                self._eof = len(bytes) < bcount
+
+        self._buf.seek(pos)
+
+        return self._buf.read(n)
+
+    def seek(self, offset, whence=SEEK_SET):
+
+        if whence == SEEK_END:
+            if not self._eof:
+                self._buf.seek(0, SEEK_END)
+                self._buf.write(self._fin.read())
+                self._eof = True
+            return self._buf.seek(offset, SEEK_END)
+
+        return self._buf.seek(offset, whence)
+
+    def close(self):
+        self._fin.close()
+        self._buf.close()
 
 if __name__ == "__main__":
     import doctest; doctest.testmod()
