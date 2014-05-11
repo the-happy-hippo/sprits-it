@@ -4,3 +4,6 @@
 [submodule "lib/readability"]
 	path = lib/readability
 	url = https://github.com/the-happy-hippo/python-readability.git
+[submodule "lib/ebooklib"]
+	path = lib/ebooklib
+	url = https://github.com/the-happy-hippo/ebooklib.git

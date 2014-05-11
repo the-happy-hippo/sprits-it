@@ -15,6 +15,7 @@ import fixpath
 
 from lxml import html, etree
 from readability import readability
+from ebooklib import epub, ITEM_DOCUMENT
 
 import pyphen
 from guess_language import guess_language
@@ -100,31 +101,45 @@ class LangGuess:
 
 #------------------------------------------------------------------------------
 
+_PARAG_SEPARATOR = '\n\n'
+
+_TAG_PADDING = {
+    'p'     : _PARAG_SEPARATOR,
+    'div'   : _PARAG_SEPARATOR,
+    'h1'    : _PARAG_SEPARATOR,
+    'h2'    : _PARAG_SEPARATOR,
+    'h3'    : _PARAG_SEPARATOR,
+    'h4'    : _PARAG_SEPARATOR,
+}
+
 class CleanDocument:
     """ Readable document fetched from ``source_url``.
     """
 
-    def __init__(self, source_url, title=None, content=None, author=None):
+    def __init__(self, source_url):
         self.url = source_url
-        self.title = title
-        self.content = content
-        self.author = author
+        self.title = None
+        self.content = []
+        self.author = None
         self.lang = None
         self.direction = None
         self._lang = LangGuess()
+        self._error = False
 
     @property
     def source_url(self):
         return self.url
 
     def is_empty(self):
-        return (not self.content)
+        return self._error or (not self.content)
 
     @classmethod
     def from_json(cls, json_object):
         """Create a document instance from JSON dictionary.
         """
         doc = cls(json_object['url'])
+
+        doc._error = json_object.get('error', '').lower() == 'true'
 
         for key, value in json_object.iteritems():
             setattr(doc, key, value)
@@ -153,10 +168,14 @@ class CleanDocument:
         # together. E.g., "<p>Hello<br/>World!</p>" should look as
         # "Hello World!" and not as "HelloWorld!".
         for node in XPATH_ALL_NODES(doc):
+            tag = node.tag.lower()
+
+            padding = _TAG_PADDING.get(tag, ' ')
+
             if node.tail:
-                node.tail = node.tail + ' '
+                node.tail = node.tail + padding
             else:
-                node.tail = ' '
+                node.tail = padding
 
         txt = html.tostring(doc, method='text', encoding='unicode')
 
@@ -206,6 +225,71 @@ class CleanDocument:
             hyphenator = self._lang.get_hyphenator(wordcontext)
             return [hyphenator.multiwrap(word, settings.max_word_len)]
 
+#------------------------------------------------------------------------------
+
+CONTENT_JSON = 1
+CONTENT_HTML = 2
+CONTENT_EPUB = 3
+
+_CONTENT_TYPE_MAP = {
+    'application/json'          : CONTENT_JSON,
+    'text/html'                 : CONTENT_HTML,
+    'application/epub+zip'      : CONTENT_EPUB,
+}
+
+#------------------------------------------------------------------------------
+
+class Content:
+    """ Representation of content retrieved from URL.
+    """
+
+    def __init__(self, url, mime_type, istream):
+        self._url = url
+        self._type = _CONTENT_TYPE_MAP.get(mime_type)
+        if not self._type:
+            raise urllib2.HTTPError(url, 500,
+                    'Unrecognized mime type %s' % mime_type)
+        self._istream = istream
+        self._title = None
+        self._author = None
+
+    @property
+    def title(self):
+        return self._title
+
+    @property
+    def author(self):
+        return self._author
+
+    def to_json(self):
+        assert self._type == CONTENT_JSON
+        return json.load(self._istream)
+
+    def generate_html_chunks(self):
+        assert self._type in [CONTENT_HTML, CONTENT_EPUB]
+
+        if self._type == CONTENT_HTML:
+            log.debug('Reading raw HTML from %s', self._url)
+
+            yield self._istream.read()
+
+        elif self._type == CONTENT_EPUB:
+            log.debug('Reading ePub from %s', self._url)
+
+            ios = lazygen.BufferedRandomReader(self._istream)
+            book = epub.read_epub(ios)
+
+            self._title, self._author = book.title, ''
+
+            authors = book.get_metadata('DC', 'creator')
+            if authors:
+                self._author = authors[0][0]
+
+            for doc_item in book.get_items_of_type(ITEM_DOCUMENT):
+                yield doc_item.content
+
+#------------------------------------------------------------------------------
+
 class Extractor:
 
     def __init__(self):
@@ -238,8 +322,15 @@ class Extractor:
 
         log.info('Getting Readability content from %s', rdd_req)
 
-        rdd_json = Extractor._get_raw_content(rdd_req, 'application/json')
-        rdd_doc  = CleanDocument.from_json(json.load(rdd_json))
+        try:
+            content = Extractor._get_raw_content(rdd_req, 'application/json')
+
+            rdd_doc = CleanDocument.from_json(content.to_json())
+
+        except urllib2.HTTPError as err:
+            log.error('Readability error for %s: %d', rdd_req, err.code)
+
+            rdd_doc = CleanDocument(url) # empty document fallback
 
         # convert html to text
         rdd_doc.textify()
@@ -249,17 +340,28 @@ class Extractor:
     def _update_content(self, doc):
         """Get readable content using local parser.
         """
-        rawhtml = Extractor._get_raw_content(doc.source_url).read()
+        content = Extractor._get_raw_content(doc.source_url)
+        word_count, clean, title = 0, [], None
 
-        rddoc = readability.Document(rawhtml)
+        for rawhtml in content.generate_html_chunks():
 
-        title, html_content = rddoc.short_title(), rddoc.summary()
+            rddoc = readability.Document(rawhtml)
 
-        doc.title = doc.title or title
-        doc.content = html_content
+            title = title or rddoc.short_title()
 
-        # convert html to text
-        doc.textify()
+            doc.content = rddoc.summary()
+
+            # convert html to text
+            doc.textify()
+
+            clean.append(doc.content)
+
+            word_count += doc.word_count
+
+        doc.title   = content.title or title
+        doc.author  = content.author
+        doc.content = ''.join(clean)
+        doc.word_count = word_count
 
     @staticmethod
     def _get_raw_content(url, mime=None, allowgzip=True):
@@ -280,7 +382,7 @@ class Extractor:
 
         meta = resp.info()
 
-        mime_type = meta.gettype()
+        mime_type = (meta.gettype() or '').lower()
 
         log.debug('Opening mime type "%s"', mime_type)
 
@@ -296,9 +398,11 @@ class Extractor:
 
             gunzip_gen = lazygen.gunzip_generator(resp)
 
-            return lazygen.StringGenStream(gunzip_gen)
+            istream = lazygen.StringGenStream(gunzip_gen)
 
-        return resp
+            return Content(url, mime_type, istream)
+
+        return Content(url, mime_type, resp)
 
 # Global extractor instance
 extractor = Extractor()
