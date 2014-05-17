@@ -13,6 +13,12 @@ ALLOW_STREAMING = environ.get('ALLOW_STREAMING', '1')
 # Current app version (mandatory)
 CURRENT_VERSION_ID = environ['CURRENT_VERSION_ID']
 
+# Readability API token (mandatory)
+READABILITY_API_KEY = environ['READABILITY_API_KEY']
+
+# Google Analytics tracking ID (optional)
+GOOG_ANALYTICS_ID = environ.get('GOOG_ANALYTICS_ID')
+
 #------------------------------------------------------------------------------
 
 # App logger
@@ -32,6 +38,9 @@ class Settings(object):
 
         self._settings['current_version'] = CURRENT_VERSION_ID
         self._settings['allow_streaming'] = allow_streaming
+        self._settings['goog_analytics_id'] = GOOG_ANALYTICS_ID
+
+        self._settings['parsers']['Readability']['token'] = READABILITY_API_KEY
 
         log.info('App settings: %r', self._settings)
 

@@ -1,5 +1,5 @@
 application: spritsit
-version: v0-4-0-beta
+version: v0-4-1-beta
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -44,6 +44,7 @@ handlers:
 
 skip_files:
 - tmp
+- local_settings.py
 - ^(.*/)?#.*#$
 - ^(.*/)?.*~$
 - ^(.*/)?.*\.py[co]$
@@ -55,6 +56,8 @@ skip_files:
 
 env_variables:
   ALLOW_STREAMING: false
+  READABILITY_API_KEY: Mandatory. Get your token at https://www.readability.com/developers/api
+  GOOG_ANALYTICS_ID: Optional. Register your site at http://www.google.com/analytics
 
 inbound_services:
 - warmup

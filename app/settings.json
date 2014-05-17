@@ -8,8 +8,6 @@
   "parsers" : {
     "Readability" : {
         "uri"     : "https://www.readability.com/api/content/v1/parser",
-        "token"   : "29d6e9893943faca8e084f5085c327a6860ed771",
-        "comment" : "Please don't abuse this API key. And better get yours at https://www.readability.com/developers/api",
         "addtime" : false
     },
     "SpritsIt"    : {
