@@ -248,7 +248,9 @@ def unsupported():
 @app.route('/')
 @app.route('/read')
 def index():
-    return render_template('index.html', version=settings.app_version)
+    return render_template('index.html',
+            version=settings.app_version,
+            goog_analytics_id=settings.goog_analytics_id)
 
 @app.route('/api')
 def api():
