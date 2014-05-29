@@ -112,6 +112,7 @@ html(lang="en")
     - var parsers = filter(locals.parsers, 'Readability')
     script!= "var parsers='" + escapify(JSON.stringify(parsers)) + "';"
     script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
+    script(src='http://talkgadget.google.com/talkgadget/channel.js')
 
     if (locals.jsmin)
       script(src='#{locals.assets}js/min/utils.min.js')
