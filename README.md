@@ -23,7 +23,7 @@ The speed reading technique is currently based on the ideas of [Spritz](http://w
 - Punctuation aware;
 - Easy-to-install _bookmarklet_;
 - Right-to-left language support (עברית and العربية);
-- eBook reading (_ePub_ format, experimental)
+- eBook reading (_ePub_ format, experimental);
 - _PDF_ text extraction (experimental);
 - _Coming soon_: word and context highlighting and navigation.
 
