@@ -578,7 +578,7 @@ function spritzify_url_with(url, parser_names) {
     })
     .always(function() {
       console.log(parser_name + ': always.' );
-    })
+    });
   } catch (e) {
      console.log('Error in spritzify_url: ' + e);
      spritz_error('Article extraction failed.');
