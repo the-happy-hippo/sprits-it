@@ -24,7 +24,7 @@ The speed reading technique is currently based on the ideas of [Spritz](http://w
 - Easy-to-install _bookmarklet_;
 - Right-to-left language support (עברית and العربية);
 - eBook reading (_ePub_ format, experimental)
-- _Coming soon_: _PDF_ text extraction;
+- _PDF_ text extraction (experimental);
 - _Coming soon_: word and context highlighting and navigation.
 
 ## Demo
@@ -48,6 +48,8 @@ Official project homepage is hosted by GitHub Pages [here](http://the-happy-hipp
 
 Currently development betas only — simply because the project lacks sufficient user base to be tested extensively. Sorry… and you can help fixing that!
 
+- [v0.5-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.5-beta) (pre-release)
+  - Added `PDF` handling;
 - [v0.4-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.4-beta) (pre-release)
   - Added basic `ePub` handling;
   - Minor fixes in RLT support and browser detection;
