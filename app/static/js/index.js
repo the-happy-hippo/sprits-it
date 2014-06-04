@@ -350,6 +350,7 @@ function spritz_alert(type) {
 
 /* ERROR FUNCTION */
 function spritz_error(msg) {
+  console.log('spritz_error: ' + msg);
   return spritz_status(msg).fadeIn().delay(5000).fadeOut();
 }
 
@@ -527,9 +528,12 @@ function spritzify_url_with(url, parser_names) {
     jQuery
     .getJSON(apireq, function (data) {
 
+        if(data.preprocess) {
+          return preprocess_url(data.preprocess, parser.name)
+        }
+
         if(data.error) {
-          spritz_error('Article extraction failed.');
-          return;
+          return spritz_error('Article extraction failed.');
         }
 
         if(data.word_count == 0) {
@@ -578,11 +582,102 @@ function spritzify_url_with(url, parser_names) {
     })
     .always(function() {
       console.log(parser_name + ': always.' );
-    })
+    });
+
+    return true;
+
   } catch (e) {
-     console.log('Error in spritzify_url: ' + e);
-     spritz_error('Article extraction failed.');
+    console.log('Error in spritzify_url: ' + e);
+    spritz_error('Article extraction failed.');
+
+    return false;
   }
+}
+
+function get_dlink(channel_token, success) {
+
+  if (!channel_token) {
+    return success();
+  }
+
+  var socket = null;
+
+  onChannelMessage = function(msg) {
+    console.log('--> MSG: ' + msg.data);
+
+    var msg   = JSON.parse(msg.data);
+    var ready, close;
+
+    if (msg.error) {
+      close = true;
+      ready = false;
+    } else {
+      close = ready = (msg.percent >= 100);
+    }
+
+    if (close) {
+      console.log('Closing the channel');
+      socket.close();
+    }
+
+    if (msg.error) {
+      spritz_error(msg.message);
+    } else if (ready) {
+      success();
+    }
+  };
+  onChannelError = function(err) {
+    var errormsg = 'Channel error: code ' + err.code;
+
+    if (err.description) {
+      errormsg += ', description: ' + err.description;
+    }
+
+    spritz_error(errormsg);
+  };
+  onChannelOpen = function() {
+    console.log('*** CHANNEL OPEN ***');
+  };
+  onChannelClose = function() {
+    console.log('*** CHANNEL CLOSE ***');
+  };
+
+  var channel = new goog.appengine.Channel(channel_token);
+  socket = channel.open({
+    "onmessage" : onChannelMessage,
+    "onerror"   : onChannelError,
+    "onopen"    : onChannelOpen,
+    "onclose"   : onChannelClose
+  });
+
+  return false;
+}
+
+function preprocess_url(preproc_url, parser) {
+
+  console.log('Calling preprocess for: ' + preproc_url + ', ' + parser);
+
+  jQuery.getJSON(preproc_url, function (data) {
+
+    console.log('preprocess_url: ' + JSON.stringify(data, null, '  '));
+
+    if (data.error) {
+      spritz_error(data.message);
+      return false;
+    }
+
+    get_dlink(data.token, function() {
+      return spritzify_url_with(data.dlink, [parser]);
+    });
+
+  })
+  .fail(function( jqxhr, status_msg, error ) {
+    var errmsg = status_msg + ", " + error;
+    console.log('preprocess_url: getJSON failed: ' + errmsg);
+    spritz_error('Article extraction failed.');
+  });
+
+  return true;
 }
 
 function create_bookmarklet() {

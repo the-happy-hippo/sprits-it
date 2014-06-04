@@ -116,13 +116,14 @@ class CleanDocument:
     """ Readable document fetched from ``source_url``.
     """
 
-    def __init__(self, source_url):
+    def __init__(self, source_url, url_type=None):
         self.url = source_url
         self.title = None
         self.content = []
         self.author = None
         self.lang = None
         self.direction = None
+        self.url_type = url_type
         self._lang = LangGuess()
         self._error = False
 
@@ -227,14 +228,16 @@ class CleanDocument:
 
 #------------------------------------------------------------------------------
 
-CONTENT_JSON = 1
-CONTENT_HTML = 2
-CONTENT_EPUB = 3
+CONTENT_JSON = 'json'
+CONTENT_HTML = 'html'
+CONTENT_EPUB = 'epub'
+CONTENT_PDF  = 'html'
 
 _CONTENT_TYPE_MAP = {
     'application/json'          : CONTENT_JSON,
     'text/html'                 : CONTENT_HTML,
     'application/epub+zip'      : CONTENT_EPUB,
+    'application/pdf'           : CONTENT_PDF,
 }
 
 #------------------------------------------------------------------------------
@@ -247,8 +250,9 @@ class Content:
         self._url = url
         self._type = _CONTENT_TYPE_MAP.get(mime_type)
         if not self._type:
-            raise urllib2.HTTPError(url, 500,
-                    'Unrecognized mime type %s' % mime_type)
+            raise urllib2.HTTPError(url, code=501, # Not Implemented
+                    msg='Unsupported mime type: %s' % mime_type,
+                    hdrs=None, fp=None)
         self._istream = istream
         self._title = None
         self._author = None
@@ -256,6 +260,10 @@ class Content:
     @property
     def title(self):
         return self._title
+
+    @property
+    def type(self):
+        return self._type
 
     @property
     def author(self):
@@ -288,6 +296,9 @@ class Content:
             for doc_item in book.get_items_of_type(ITEM_DOCUMENT):
                 yield doc_item.content
 
+        elif self._type == CONTENT_PDF:
+            yield ''
+
 #------------------------------------------------------------------------------
 
 class Extractor:
@@ -317,6 +328,20 @@ class Extractor:
     def _get_from_rdd(self, url):
         """Use Readability online API.
         """
+        # Save the round-trip if we're confident ``url`` cannot be parsed
+        urll = url.lower()
+
+        if urll.endswith('.epub'):
+            url_type = CONTENT_EPUB
+        elif urll.endswith('.pdf'):
+            url_type = CONTENT_PDF
+        else:
+            url_type = None
+
+        if url_type:
+            log.warn('ePub/pdf CANNOT be parsed with Readability: %s', url)
+            return CleanDocument(url, url_type) # empty document fallback
+
         rdd_args = urllib.urlencode( dict(url=url, token=self._rdd_api_key) )
         rdd_req  = self._rdd_api_url + '?' + rdd_args
 
@@ -340,23 +365,32 @@ class Extractor:
     def _update_content(self, doc):
         """Get readable content using local parser.
         """
-        content = Extractor._get_raw_content(doc.source_url)
+        if doc.url_type != CONTENT_PDF:
+            content = Extractor._get_raw_content(doc.source_url)
+            doc.url_type = content.type
+
+        if doc.url_type == CONTENT_PDF:
+            preproc_url = 'http://get-html.appspot.com/q?'
+            doc.preprocess = preproc_url + urllib.urlencode( {'u':doc.url} )
+            return doc
+
         word_count, clean, title = 0, [], None
 
         for rawhtml in content.generate_html_chunks():
+            if rawhtml:
 
-            rddoc = readability.Document(rawhtml)
+                rddoc = readability.Document(rawhtml)
 
-            title = title or rddoc.short_title()
+                title = title or rddoc.short_title()
 
-            doc.content = rddoc.summary()
+                doc.content = rddoc.summary()
 
-            # convert html to text
-            doc.textify()
+                # convert html to text
+                doc.textify()
 
-            clean.append(doc.content)
+                clean.append(doc.content)
 
-            word_count += doc.word_count
+                word_count += doc.word_count
 
         doc.title   = content.title or title
         doc.author  = content.author
