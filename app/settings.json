@@ -1,4 +1,6 @@
 {
+  "current_version": "v0.4.1-beta",
+
   "assets"        : "/assets/",
   "jsmin"         : true,
 

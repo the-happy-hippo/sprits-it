@@ -10,9 +10,6 @@ from os import environ, path
 # it wants to know the response content length upfront :(
 ALLOW_STREAMING = environ.get('ALLOW_STREAMING', '1')
 
-# Current app version (mandatory)
-CURRENT_VERSION_ID = environ['CURRENT_VERSION_ID']
-
 # Readability API token (mandatory)
 READABILITY_API_KEY = environ['READABILITY_API_KEY']
 
@@ -36,7 +33,20 @@ class Settings(object):
 
         allow_streaming = ALLOW_STREAMING.lower() not in ['false', '0']
 
-        self._settings['current_version'] = CURRENT_VERSION_ID
+        current_version = self._settings['current_version']
+
+        # Current app version is preset by App Engine
+        GAE_CURRENT_VERSION_ID = environ.get('CURRENT_VERSION_ID')
+
+        if GAE_CURRENT_VERSION_ID is not None:
+            gae_version_norm = GAE_CURRENT_VERSION_ID.replace('-', '.')
+            current_version_norm = current_version.replace('-', '.')
+            if not gae_version_norm.startswith(current_version_norm):
+                raise ValueError(
+                    "App version {} doesn't match GAE version {}".format(
+                        current_version, GAE_CURRENT_VERSION_ID))
+            self._settings['current_version'] = GAE_CURRENT_VERSION_ID
+
         self._settings['allow_streaming'] = allow_streaming
         self._settings['goog_analytics_id'] = GOOG_ANALYTICS_ID
 
