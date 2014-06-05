@@ -44,6 +44,160 @@ Alternatively, you migh just grab a _bookmarklet_ in the settings section of the
 
 Official project homepage is hosted by GitHub Pages [here](http://the-happy-hippo.github.io/sprits-it).
 
+## Installation instructions
+
+### Prerequisites
+
+1. Get your Readability™ API token at https://www.readability.com/developers/api;
+1. Optionally, if you'd like to track your site with [Google Analytics](http://www.google.com/analytics) then get a Tracking ID at http://www.google.com/analytics.
+
+### Cloning the repo
+
+Clone with `--recursive` flag — this flag is needed for `git` to recursively fetch all the submodule dependencies for the project. E.g.:
+
+    git clone --recursive https://github.com/my-user/sprits-it.git
+
+### Running locally with Flask dev server
+
+- Change to project root folder:
+
+```
+cd sprits-it/
+```
+
+- Create `virtualenv` for the project:
+
+```
+> virtualenv venv
+> . venv/bin/activate
+> pip install -r app/requirements.txt
+```
+
+- Set your Readability API token and, optionally, Google Analytics Tracking ID in `app/.env` like so:
+
+```
+READABILITY_API_KEY=1234567890123456789012345678901234567890
+GOOG_ANALYTICS_ID=UU-12345678-9
+```
+
+- Run Flask dev server from the `app` folder:
+
+```
+> cd app/
+> python spritsit.py
+
+```
+
+- Visit `http://localhost:8080` in your browser.
+
+
+### Deploying on [Heroku](https://www.heroku.com)
+
+If you are new to [Heroku](https://www.heroku.com) platform, visit the "Getting Started" guide at https://devcenter.heroku.com/articles/quickstart. Here we'll assume you have already set up your app's _empty_ Heroku repo under `heroku-app/`.
+
+> Note: `git` manipulations below are needed due to the fact that the code should be imported from a _foreign_ `git` repo (hosted on `GitHub`) to native `Heroku` repo, and moreover, because the sources (such as `Procfile`, etc.) **must** be placed in the root folder instead of in `app/` subfolder 
+
+```
+heroku-app/> git remote -v
+heroku  git@heroku.com:heroku-app.git (fetch)
+heroku  git@heroku.com:heroku-app.git (push)
+```
+
+- Import `sprits-it` sources from the `GitHub` repo:
+
+```
+heroku-app/> git remote add -f sprits-it  https://github.com/my-user/sprits-it.git
+heroku-app/> git merge -s ours --no-commit sprits-it/master
+```
+
+- Move app sources to the root:
+
+```
+heroku-app/> git mv app/* app/.env .
+```
+
+- Now, edit `.gitmodules` to fix module locations. That is, open `.gitmodules` and replace _every_ occurence of `app/lib/` with `lib/`;
+
+- Re-initialize submodules:
+
+```
+heroku-app/> git submodule init
+heroku-app/> git submodule sync
+heroku-app/> git submodule update
+```
+
+- Create `venv` as described in `Heroku` documentation:
+
+```
+heroku-app/> virtualenv venv
+heroku-app/> . venv/bin/activate
+heroku-app/> pip install -r requirements.txt
+```
+
+- Set your Readability API token and, optionally, Google Analytics Tracking ID in `.env` like so:
+
+```
+READABILITY_API_KEY=1234567890123456789012345678901234567890
+GOOG_ANALYTICS_ID=UU-12345678-9
+```
+
+- Run local dev server:
+
+```
+heroku-app/> foreman start
+```
+
+- To test the result, visit `http://localhost:5000` in your browser.
+
+- Before deploying the app to `Heroku` server, set the following config var to instruct the app that it is running in 'production' environment (as opposed to the local dev server):
+
+```
+heroku-app/> heroku config:set HEROKU=1
+```
+
+- Commit and deploy regularly as described at https://devcenter.heroku.com/articles/getting-started-with-python, e.g.:
+
+```
+heroku-app/> git add -A .
+heroku-app/> git commit
+heroku-app/> git push heroku master
+```
+
+### Deploying on [Google App Engine](https://cloud.google.com/products/app-engine)
+
+The following assumes `GAE` SDK is located in `google_appengine/`.
+
+- Clone the repo as described above:
+
+```
+google_appengine/> git clone --recursive https://github.com/my-user/sprits-it.git
+google_appengine/> cd sprits-it/
+```
+
+- Install the requirements to `app/lib/`:
+
+```
+sprits-it/> pip install -r app/requirements.txt -t app/lib/
+```
+
+- Set your Readability API token and, optionally, Google Analytics Tracking ID in `app/.env` like so:
+
+```
+READABILITY_API_KEY=1234567890123456789012345678901234567890
+GOOG_ANALYTICS_ID=UU-12345678-9
+```
+
+- Run local dev server:
+
+```
+sprits-it/> pip install -r app/requirements.txt -t app/lib/
+sprits-it/> python ../dev_appserver.py app
+```
+
+- To test the result, visit `http://localhost:8080` in your browser.
+
+- Deploy to `GAE` (for instructions see [here](https://developers.google.com/appengine/docs/python/gettingstartedpython27/uploading)).
+
 ## Changelog
 
 Currently development betas only — simply because the project lacks sufficient user base to be tested extensively. Sorry… and you can help fixing that!
