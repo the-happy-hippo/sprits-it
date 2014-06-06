@@ -231,7 +231,7 @@ class CleanDocument:
 CONTENT_JSON = 'json'
 CONTENT_HTML = 'html'
 CONTENT_EPUB = 'epub'
-CONTENT_PDF  = 'html'
+CONTENT_PDF  = 'pdf'
 
 _CONTENT_TYPE_MAP = {
     'application/json'          : CONTENT_JSON,
