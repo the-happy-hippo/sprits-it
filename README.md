@@ -185,7 +185,7 @@ sprits-it/> pip install -r app/requirements_gae.txt -t app/lib/
 ```
 
 - Set your Readability API token and, optionally, Google Analytics Tracking ID
-  as described in [the previous section](#setenv);
+  as described in [the previous section](#setenv)
 
 - Run local dev server:
 
@@ -201,6 +201,8 @@ sprits-it/> python ../dev_appserver.py app
 
 Currently development betas only — simply because the project lacks sufficient user base to be tested extensively. Sorry… and you can help fixing that!
 
+- [v0.5.1-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.5.1-beta)
+  - Full installation instructions;
 - [v0.5-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.5-beta) (pre-release)
   - Added `PDF` handling;
 - [v0.4-beta](https://github.com/the-happy-hippo/sprits-it/releases/tag/v0.4-beta) (pre-release)
