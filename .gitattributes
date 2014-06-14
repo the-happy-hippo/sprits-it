@@ -1,1 +1,2 @@
-.env binary
+.env text eol=lf
+settings.json text eol=lf

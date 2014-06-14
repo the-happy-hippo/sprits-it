@@ -42,10 +42,25 @@ _read_env()
 ALLOW_STREAMING = environ['ALLOW_STREAMING']
 
 # Readability API token (mandatory)
-READABILITY_API_KEY = environ['READABILITY_API_KEY']
+READABILITY_API_KEY = environ.get('READABILITY_API_KEY')
 
 # Google Analytics tracking ID (optional)
 GOOG_ANALYTICS_ID = environ.get('GOOG_ANALYTICS_ID')
+
+#------------------------------------------------------------------------------
+
+ERROR_UNDEFINED_READABILITY_KEY = '''
+Readability API key is undefined. Please get your key at
+https://www.readability.com/developers/api and set it either
+as an environment variable (e.g., with ``export READABILITY_API_KEY=<Key>``)
+or in ``app/.env`` file.
+'''
+WARN_UNDEFINED_GOOG_ANALYTICS_ID = '''
+Google Tracking ID is undefined. If you want your site to be tracked by Google \
+Analytics, please register and get a tracking ID at \
+http://www.google.com/analytics. Then set it either as an environment variable \
+(e.g., with ``export GOOG_ANALYTICS_ID=<ID>``) or in ``app/.env`` file.
+'''
 
 #------------------------------------------------------------------------------
 
@@ -74,7 +89,14 @@ class Settings(object):
             self._settings['current_version'] = GAE_CURRENT_VERSION_ID
 
         self._settings['allow_streaming'] = allow_streaming
+
+        if not GOOG_ANALYTICS_ID:
+            log.warn(WARN_UNDEFINED_GOOG_ANALYTICS_ID.strip())
+
         self._settings['goog_analytics_id'] = GOOG_ANALYTICS_ID
+
+        if not READABILITY_API_KEY:
+            raise ValueError(ERROR_UNDEFINED_READABILITY_KEY.strip())
 
         self._settings['parsers']['Readability']['token'] = READABILITY_API_KEY
 

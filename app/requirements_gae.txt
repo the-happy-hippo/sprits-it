@@ -1,0 +1,7 @@
+Flask==0.10.1
+Werkzeug==0.9.4
+chardet==2.2.1
+cssselect==0.9.1
+guess-language==0.2
+itsdangerous==0.24
+six==1.6.1

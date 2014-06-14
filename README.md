@@ -73,9 +73,17 @@ cd sprits-it/
 > pip install -r app/requirements.txt
 ```
 
-- Set your Readability API token and, optionally, Google Analytics Tracking ID in `app/.env` like so:
+- <a name='setenv'></a>Set your Readability API token and, optionally, Google Analytics
+  Tracking ID values. There are two alternatives for doing so: either set them as the
+  environment variables, or directly in ``app/.env`` file:
 
 ```
+> export READABILITY_API_KEY=1234567890123456789012345678901234567890
+> export GOOG_ANALYTICS_ID=UU-12345678-9
+```
+
+```
+> cat app/.env
 READABILITY_API_KEY=1234567890123456789012345678901234567890
 GOOG_ANALYTICS_ID=UU-12345678-9
 ```
@@ -134,12 +142,8 @@ heroku-app/> . venv/bin/activate
 heroku-app/> pip install -r requirements.txt
 ```
 
-- Set your Readability API token and, optionally, Google Analytics Tracking ID in `.env` like so:
-
-```
-READABILITY_API_KEY=1234567890123456789012345678901234567890
-GOOG_ANALYTICS_ID=UU-12345678-9
-```
+- Set your Readability API token and, optionally, Google Analytics Tracking ID
+  as described in [the previous section](#setenv)
 
 - Run local dev server:
 
@@ -174,23 +178,18 @@ google_appengine/> git clone --recursive https://github.com/my-user/sprits-it.gi
 google_appengine/> cd sprits-it/
 ```
 
-- Install the requirements to `app/lib/`:
+- Install the requirements to `app/lib/` folder:
 
 ```
-sprits-it/> pip install -r app/requirements.txt -t app/lib/
+sprits-it/> pip install -r app/requirements_gae.txt -t app/lib/
 ```
 
-- Set your Readability API token and, optionally, Google Analytics Tracking ID in `app/.env` like so:
-
-```
-READABILITY_API_KEY=1234567890123456789012345678901234567890
-GOOG_ANALYTICS_ID=UU-12345678-9
-```
+- Set your Readability API token and, optionally, Google Analytics Tracking ID
+  as described in [the previous section](#setenv);
 
 - Run local dev server:
 
 ```
-sprits-it/> pip install -r app/requirements.txt -t app/lib/
 sprits-it/> python ../dev_appserver.py app
 ```
 
