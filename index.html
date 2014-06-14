@@ -35,6 +35,122 @@
 </blockquote>
 <p>Alternatively, you migh just grab a <em>bookmarklet</em> in the settings section of the demo.</p>
 <p>Official project homepage is hosted by GitHub Pages <a href="http://the-happy-hippo.github.io/sprits-it">here</a>.</p>
+<h2 id="installation-instructions">Installation instructions</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ol>
+<li>Get your Readability™ API token at <a href="https://www.readability.com/developers/api">https://www.readability.com/developers/api</a>;</li>
+<li>Optionally, if you&#39;d like to track your site with <a href="http://www.google.com/analytics">Google Analytics</a> then get a Tracking ID at <a href="http://www.google.com/analytics">http://www.google.com/analytics</a>.</li>
+</ol>
+<h3 id="cloning-the-repo">Cloning the repo</h3>
+<p>Clone with <code>--recursive</code> flag — this flag is needed for <code>git</code> to recursively fetch all the submodule dependencies for the project. E.g.:</p>
+<pre><code>git clone --recursive https://github.com/my-user/sprits-it.git</code></pre>
+<h3 id="running-locally-with-flask-dev-server">Running locally with Flask dev server</h3>
+<ul>
+<li>Change to project root folder:</li>
+</ul>
+<pre><code>cd sprits-it/</code></pre>
+<ul>
+<li>Create <code>virtualenv</code> for the project:</li>
+</ul>
+<pre><code>&gt; virtualenv venv
+&gt; . venv/bin/activate
+&gt; pip install -r app/requirements.txt</code></pre>
+<ul>
+<li><a name='setenv'></a>Set your Readability API token and, optionally, Google Analytics
+Tracking ID values. There are two alternatives for doing so: either set them as the
+environment variables, or directly in <code>app/.env</code> file:</li>
+</ul>
+<pre><code>&gt; export READABILITY_API_KEY=1234567890123456789012345678901234567890
+&gt; export GOOG_ANALYTICS_ID=UU-12345678-9</code></pre>
+<pre><code>&gt; cat app/.env
+READABILITY_API_KEY=1234567890123456789012345678901234567890
+GOOG_ANALYTICS_ID=UU-12345678-9</code></pre>
+<ul>
+<li>Run Flask dev server from the <code>app</code> folder:</li>
+</ul>
+<pre><code>&gt; cd app/
+&gt; python spritsit.py</code></pre>
+<ul>
+<li>Visit <code>http://localhost:8080</code> in your browser.</li>
+</ul>
+<h3 id="deploying-on-heroku-https-www-heroku-com-">Deploying on <a href="https://www.heroku.com">Heroku</a></h3>
+<p>If you are new to <a href="https://www.heroku.com">Heroku</a> platform, visit the &quot;Getting Started&quot; guide at <a href="https://devcenter.heroku.com/articles/quickstart">https://devcenter.heroku.com/articles/quickstart</a>. Here we&#39;ll assume you have already set up your app&#39;s <em>empty</em> Heroku repo under <code>heroku-app/</code>.</p>
+<blockquote>
+<p>Note: <code>git</code> manipulations below are needed due to the fact that the code should be imported from a <em>foreign</em> <code>git</code> repo (hosted on <code>GitHub</code>) to native <code>Heroku</code> repo, and moreover, because the sources (such as <code>Procfile</code>, etc.) <strong>must</strong> be placed in the root folder instead of in <code>app/</code> subfolder </p>
+</blockquote>
+<pre><code>heroku-app/&gt; git remote -v
+heroku  git@heroku.com:heroku-app.git (fetch)
+heroku  git@heroku.com:heroku-app.git (push)</code></pre>
+<ul>
+<li>Import <code>sprits-it</code> sources from the <code>GitHub</code> repo:</li>
+</ul>
+<pre><code>heroku-app/&gt; git remote add -f sprits-it  https://github.com/my-user/sprits-it.git
+heroku-app/&gt; git merge -s ours --no-commit sprits-it/master</code></pre>
+<ul>
+<li>Move app sources to the root:</li>
+</ul>
+<pre><code>heroku-app/&gt; git mv app/* app/.env .</code></pre>
+<ul>
+<li><p>Now, edit <code>.gitmodules</code> to fix module locations. That is, open <code>.gitmodules</code> and replace <em>every</em> occurence of <code>app/lib/</code> with <code>lib/</code>;</p>
+</li>
+<li><p>Re-initialize submodules:</p>
+</li>
+</ul>
+<pre><code>heroku-app/&gt; git submodule init
+heroku-app/&gt; git submodule sync
+heroku-app/&gt; git submodule update</code></pre>
+<ul>
+<li>Create <code>venv</code> as described in <code>Heroku</code> documentation:</li>
+</ul>
+<pre><code>heroku-app/&gt; virtualenv venv
+heroku-app/&gt; . venv/bin/activate
+heroku-app/&gt; pip install -r requirements.txt</code></pre>
+<ul>
+<li><p>Set your Readability API token and, optionally, Google Analytics Tracking ID
+as described in <a href="#setenv">the previous section</a></p>
+</li>
+<li><p>Run local dev server:</p>
+</li>
+</ul>
+<pre><code>heroku-app/&gt; foreman start</code></pre>
+<ul>
+<li><p>To test the result, visit <code>http://localhost:5000</code> in your browser.</p>
+</li>
+<li><p>Before deploying the app to <code>Heroku</code> server, set the following config var to instruct the app that it is running in &#39;production&#39; environment (as opposed to the local dev server):</p>
+</li>
+</ul>
+<pre><code>heroku-app/&gt; heroku config:set HEROKU=1</code></pre>
+<ul>
+<li>Commit and deploy regularly as described at <a href="https://devcenter.heroku.com/articles/getting-started-with-python">https://devcenter.heroku.com/articles/getting-started-with-python</a>, e.g.:</li>
+</ul>
+<pre><code>heroku-app/&gt; git add -A .
+heroku-app/&gt; git commit
+heroku-app/&gt; git push heroku master</code></pre>
+<h3 id="deploying-on-google-app-engine-https-cloud-google-com-products-app-engine-">Deploying on <a href="https://cloud.google.com/products/app-engine">Google App Engine</a></h3>
+<p>The following assumes <code>GAE</code> SDK is located in <code>google_appengine/</code>.</p>
+<ul>
+<li>Clone the repo as described above:</li>
+</ul>
+<pre><code>google_appengine/&gt; git clone --recursive https://github.com/my-user/sprits-it.git
+google_appengine/&gt; cd sprits-it/</code></pre>
+<ul>
+<li>Install the requirements to <code>app/lib/</code> folder:</li>
+</ul>
+<pre><code>sprits-it/&gt; pip install -r app/requirements_gae.txt -t app/lib/</code></pre>
+<ul>
+<li><p>Set your Readability API token and, optionally, Google Analytics Tracking ID
+as described in <a href="#setenv">the previous section</a>;</p>
+</li>
+<li><p>Run local dev server:</p>
+</li>
+</ul>
+<pre><code>sprits-it/&gt; python ../dev_appserver.py app</code></pre>
+<ul>
+<li><p>To test the result, visit <code>http://localhost:8080</code> in your browser.</p>
+</li>
+<li><p>Deploy to <code>GAE</code> (for instructions see <a href="https://developers.google.com/appengine/docs/python/gettingstartedpython27/uploading">here</a>).</p>
+</li>
+</ul>
 <h2 id="changelog">Changelog</h2>
 <p>Currently development betas only — simply because the project lacks sufficient user base to be tested extensively. Sorry… and you can help fixing that!</p>
 <ul>
